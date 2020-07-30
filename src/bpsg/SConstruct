@@ -1,0 +1,182 @@
+import os
+import sys
+sys.path.append(os.path.join(os.getcwd(), os.pardir, os.pardir, 'scripts'))
+import buildMethods
+
+platform = sys.platform
+
+# define target file names
+paramSharedTarget  = 'libparam.so'
+psglibSharedTarget = 'libpsglib.so'
+s2pulTarget        = 's2pul'
+
+if (platform=="darwin"):
+    paramSharedTarget  = 'libparam.dylib'
+    psglibSharedTarget = 'libpsglib.dylib'
+    
+# we need to specify an absolute path so this SConstruct file
+# can be called from any other SConstruct file
+cwd = os.getcwd()
+
+# library dependancies
+ncommPath = os.path.join(cwd, os.pardir, 'ncomm')
+SConscript(os.path.join(ncommPath, 'SConstruct'))
+
+vnmrPath     = os.path.join(cwd, os.pardir, 'vnmr')
+vnmrHdrList  = [
+                'allocate.h',
+                'CSfuncs.h',
+                'data.h',
+                'dpsdef.h',
+                'group.h',
+                'init.h',
+                'params.h',
+                'pvars.h',
+                'symtab.h',
+                'tools.h',
+                'variables.h',
+                'vfilesys.h',
+                'wjunk.h']
+vnmrList = [
+                'assign.c',
+                'allocate.c',
+                'CSfuncs.c',
+                'pvars.c',
+                'symtab.c',
+                'tools.c',
+                'vfilesys.c',
+                'variables1.c']
+
+psgHdrList = ['abort.h',
+                'cps.h',
+                'vnmrsys.h',
+                ]
+
+expprocHdrList = ['shrexpinfo.h']
+expprocPath    = os.path.join(cwd, os.pardir, 'expproc')
+
+b12procList = ['conf.c']
+b12procPath    = os.path.join(cwd, os.pardir, 'b12proc')
+
+psgList = ['abort.c',
+               'active.c',
+               'getparm.c',
+               'hash.c',
+               'P_receive.c',
+               'sendasync.c',
+               'setparm.c',
+               'signalhandler.c',
+               'stubs.c',
+               'treefuncs.c',
+               'x_ps.c',
+           ]
+
+nvpsgPath    = os.path.join(cwd, os.pardir, 'nvpsg')
+psgPath    = os.path.join(cwd, os.pardir, 'psg')
+nvpsgHdrList = [
+               'arrayfuncs.h']
+
+bpsgList = [
+               'arrayfuncs.c',
+               'b12funcs.c',
+               'cps.c',
+               'if.c',
+               'initacqparms.c',
+               'phase.c',
+               'presequence.c',
+               'psg.c',
+               'xmath.c',
+           ]
+
+bpsgHdrList = [
+                'acqparms.h',
+                'b12funcs.h',
+                'macros.h',
+                'phase.h',
+                'standard.h',
+             ]
+
+psgSeqPath       = os.path.join(cwd, os.pardir, 'bpsglib')
+psgSeqFileList   = ['s2pul.c']
+
+makeList  = ['makeuserpsg.lnx',
+             'seqgenmake']
+
+# build environment
+env = Environment(CCFLAGS    = '-c -O -m32 -fPIC -Wall',
+                  CPPDEFINES = ['LINUX', 'NESSIE', 'PSG_LC'],
+                  LINKFLAGS  = '-m32 -Wl,-rpath,.',
+                  CPPPATH    = [cwd])
+
+
+buildMethods.makeSymLinks(env, paramSharedTarget, cwd, vnmrPath, vnmrList)
+buildMethods.makeSymLinks(env, paramSharedTarget, cwd, vnmrPath, vnmrHdrList)
+buildMethods.makeSymLinks(env, paramSharedTarget, cwd, psgPath, psgList)
+buildMethods.makeSymLinks(env, paramSharedTarget, cwd, psgPath, psgHdrList)
+
+buildMethods.makeSymLinks(env, psglibSharedTarget, cwd, psgSeqPath, psgSeqFileList)
+buildMethods.makeSymLinks(env, psglibSharedTarget, cwd, nvpsgPath, nvpsgHdrList)
+buildMethods.makeSymLinks(env, psglibSharedTarget, cwd, expprocPath, expprocHdrList)
+buildMethods.makeSymLinks(env, paramSharedTarget, cwd, b12procPath, b12procList)
+
+buildMethods.makeSymLinks(env, s2pulTarget, cwd, psgSeqPath, psgSeqFileList)
+# buildMethods.makeSymLinks(env, s2pulTarget, cwd, vnmrPath, vnmrHdrList)
+
+# aggregated source lists
+psgLibList = psgList + bpsgList + b12procList
+s2pulList  = psgSeqFileList
+
+# library lists
+libLists = ['acqcomm', 'm']
+
+# actual builds
+paramShared = env.SharedLibrary(target  = paramSharedTarget,
+                                source  = vnmrList,
+                                LIBPATH = ncommPath,
+                                LIBS    = libLists)
+                                
+psglibShared = env.SharedLibrary(target  = psglibSharedTarget,
+                                 source  = psgLibList,
+                                 LIBPATH = ncommPath,
+                                 LIBS    = libLists)
+                                                              
+if ( 'interix' not in platform ):                                 
+    s2pul = env.Program(target  = s2pulTarget,
+                          source  = s2pulList,
+                          LIBS    = ['psglib', 'param', 'acqcomm', 'm'],
+                          LIBPATH = [cwd, ncommPath])
+
+
+# define with absolute path where built files will be copied
+vnmrlibPath    = os.path.join(cwd, os.pardir, os.pardir, os.pardir, 'console', 'b12', 'lib')
+
+# make sure the path(s) exist
+if not os.path.exists(vnmrlibPath):
+   os.makedirs(vnmrlibPath)
+
+   # actions to be performed after targets are built
+
+if ( 'interix' not in platform ):
+    env.AddPostAction(paramShared,
+               Action(Copy(vnmrlibPath, os.path.join(cwd, paramSharedTarget))))
+
+
+if ( 'interix' not in platform ):
+    env.AddPostAction(psglibShared,
+               Action(Copy(vnmrlibPath, os.path.join(cwd, psglibSharedTarget))))
+
+
+vnmrPsgPath    = os.path.join(cwd, os.pardir, os.pardir, os.pardir, 'console', 'b12', 'psg')
+
+if not os.path.exists(vnmrPsgPath):
+   os.makedirs(vnmrPsgPath)
+
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, vnmrHdrList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, psgList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, psgHdrList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, nvpsgHdrList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, makeList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, bpsgList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, b12procList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, bpsgHdrList, '644')
+buildMethods.postBuildCopyPerm(env, psglibShared, vnmrPsgPath, cwd, expprocHdrList, '644')

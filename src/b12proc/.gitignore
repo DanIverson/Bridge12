@@ -1,0 +1,7 @@
+*.a
+*.o
+*.os
+*.so
+.sconsign.dblite
+
+B12proc

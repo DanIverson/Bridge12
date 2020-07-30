@@ -1,0 +1,168 @@
+"macro config"
+" config - configure a Bridge12 system"
+
+if ($# >= 1) then
+  $op = $1
+else
+  $op = 'init'
+endif
+
+$tmpfile=systemdir+'/tmp/config.bk'
+exists(systemdir+'/conpar','file','rw'):$update
+if ($op = 'init') or ($op = 'auto') then
+    delete($tmpfile,''):$e
+    fsave($tmpfile,'systemglobal')
+    chmod(666,$tmpfile):$e
+
+    $systype='b12'
+    $consoletype='BRIDGE12'
+    if ($update) then
+       exists(systemdir+'/conpar.prev','file','rw'):$e
+       if ($e > 0.5) then
+         $rev=rev $revdate=revdate
+         fread(systemdir+'/conpar','systemglobal','reset')
+         fread(systemdir+'/conpar.prev','systemglobal','value')
+         rev=$rev revdate=$revdate
+         $num = size('parstep')
+         if ($num < 23) then
+           setvalue('parstep',0.1,22,'systemglobal')
+           setvalue('parmin',-1e9,22,'systemglobal')
+           setvalue('parmax',1e9,22,'systemglobal')
+           setvalue('parstep',1,23,'systemglobal')
+           setvalue('parmin',-16,23,'systemglobal')
+           setvalue('parmax',63,23,'systemglobal')
+         endif
+         fsave(systemdir+'/conpar','systemglobal')
+         
+       endif
+    endif
+
+    $file=systemdir+'/tmp/smsport'
+    write('reset',$file)
+    write('file',$file,'None n')
+      numrfch=1
+      rfinterface=2
+      ptsval[1]=456
+      gradtype='nnn'
+      traymax=0
+      off('traymax','systemglobal')
+    if ($op <> 'auto') then
+      host:$host
+      vnmrjcmd('popup', 'mode:modal', 'file:config.xml', 'rebuild:yes', 'location:topMenuBar', \
+               'help:/vnmr/jhelp/dialog/config.html', 'pnewupdate:true', \
+               'cancel:'+$0+'(`cancel`)', 'ok:'+$0+'(`ok`)', \
+               'title:'+$host+ ' ' + $consoletype + ' Configuration')
+    endif
+endif
+if ($op = 'ok') or ($op = 'auto') then
+  delete($tmpfile,''):$e
+  if ($update) then
+    delete(systemdir+'/conpar.prev',''):$e
+    
+    dsp='n'
+    setvalue('Console','b12',1,'systemglobal')
+    setvalue('consoletype','BRIDGE12',1,'systemglobal')
+      $pwrstep = 1
+      $pwrmin = -16
+
+    setprotect('parstep','off',4,'systemglobal')
+//  tof, dof, etc
+    parstep[7] = 0.1
+    parstep[8] = 0.1
+    parstep[16] = 0.1
+    parstep[20] = 0.1
+    parstep[22] = 0.1
+    parstep[9] = $pwrstep
+    parstep[17] = $pwrstep
+    parstep[18] = $pwrstep
+    parstep[21] = $pwrstep
+    parstep[23] = $pwrstep
+    setprotect('parstep','on',4,'systemglobal')
+    setprotect('parmin','off',4,'systemglobal')
+//  min for power levels
+    parmin[9] = $pwrmin
+    parmin[17] = $pwrmin
+    parmin[18] = $pwrmin
+    parmin[21] = $pwrmin
+    parmin[23] = $pwrmin
+//  min for tof, dof, etc
+    parmin[7] = -1e9
+    parmin[8] = -1e9
+    parmin[16] = -1e9
+    parmin[20] = -1e9
+    parmin[22] = -1e9
+    setprotect('parmin','on',4,'systemglobal')
+    setprotect('parmax','off',4,'systemglobal')
+//  max for tof, dof, etc
+    parmax[7] = 1e9
+    parmax[8] = 1e9
+    parmax[16] = 1e9
+    parmax[20] = 1e9
+    parmax[22] = 1e9
+    setprotect('parmax','on',4,'systemglobal')
+    $num = 0
+    $snum=''
+    while ($num < numrfch) do
+      $num=$num+1
+      cattn[$num]=79
+      fattn[$num]=4095
+    endwhile
+
+//  sw
+    setvalue('parmax',5e6, 5,'systemglobal')
+    setvalue('parmin',200, 5,'systemglobal')
+    setvalue('parstep',0, 5,'systemglobal')
+//  fb
+    setvalue('parmax',256000,6,'systemglobal')
+    setvalue('parmin',  1000,6,'systemglobal')
+    setvalue('parstep', 1000,6,'systemglobal')
+//  delays
+    setvalue('parstep',1.25e-8, 14,'systemglobal')
+//  pulses
+    setvalue('parstep',0.0125, 13,'systemglobal')
+    setvalue('parstep',0.0125, 15,'systemglobal')
+
+//  dmf
+    setvalue('parmax',2e6,    11,'systemglobal')
+    setvalue('parmin', 100.0, 11,'systemglobal')
+    setvalue('parstep',1.0, 11,'systemglobal')
+    if (shimset = 10) then
+      setvalue('parmax',  2047.0, 19,'systemglobal')
+      setvalue('parmin', -2048.0, 19,'systemglobal')
+    else
+      setvalue('parmax',  32767.0, 19,'systemglobal')
+      setvalue('parmin', -32767.0, 19,'systemglobal')
+    endif
+    setvalue('parstep',1.0, 19,'systemglobal')
+
+    host:$host
+    setvalue('instrument',$host,'systemglobal')
+
+    vttype=0
+      h1freq=14
+//      $nuc=''
+//      $val=''
+//      readfile(systemdir+'/nuctables/nuctable','$nuc','$val','H2','local'):$num
+//      substr($val[1],1):$h2
+//      lockfreq=h1freq/(1000/$h2)
+    fsave(systemdir+'/conpar','systemglobal')
+      delete(systemdir+'/tests',''):$e
+      delete(systemdir+'/stdpar',''):$e
+    $h1='14'
+    cp('par'+$h1+'/tests',systemdir+'/tests','symlink'):$e
+    cp('par'+$h1+'/stdpar',systemdir+'/stdpar','symlink'):$e
+      $j = 1
+      $j2 = ''
+      write('line3',' fread(`%s/conpar`,`systemglobal`)',systemdir):$cmd
+      while ($j <= jviewports[1]) do
+        if ($j <> jviewport) then
+          format($j,1,0):$j2
+          vnmrjcmd('VP ' + $j2 + $cmd)
+        endif
+        $j = $j + 1
+      endwhile
+  endif
+elseif ($op = 'cancel') then
+  fread($tmpfile,'systemglobal','reset')
+  delete($tmpfile,''):$e
+endif

@@ -1,0 +1,105 @@
+import os
+import sys
+sys.path.append(os.path.join(os.getcwd(), os.pardir, os.pardir, 'scripts'))
+import buildMethods
+
+# define target file name
+target = 'B12proc'
+target2 = 'B12proc_dbg'
+
+# we need to specify an absolute path so this SConstruct file
+# can be called from any other SConstruct file
+cwd = os.getcwd()
+
+
+
+ncommPath = os.path.join(cwd, os.pardir, 'ncomm')
+ncommHdrList = [ 'errLogLib.h',
+                 'mfileObj.h',
+                 'ipcMsgQLib.h',
+                 'msgQLib.h',
+                 'semLib.h',
+                 'shrMLib.h' ]
+
+ncommFileList = [ 'msgQLib.c',
+                  'mfileObj.c',
+                 'errLogLib.c',
+                  'ipcMsgQLib.c',
+                  'semLib.c',
+                  'shrMLib.c']
+
+procProcPath     = os.path.join(cwd, os.pardir, 'procproc')
+procProcHdrList = [ 'procQfuncs.h' ]
+procProcFileList = [ 'procQfuncs.c' ]
+
+expProcPath     = os.path.join(cwd, os.pardir, 'expproc')
+expProcHdrList = [ 'expDoneCodes.h',
+                   'expQfuncs.h',
+                   'hostMsgChannels.h',
+                   'shrstatinfo.h',
+                   'shrexpinfo.h' ]
+expProcPath     = os.path.join(cwd, os.pardir, 'expproc')
+expProcFileList = [ 'statfuncs.c',
+                    'expQfuncs.c' ]
+
+vnmrPath     = os.path.join(cwd, os.pardir, 'vnmr')
+vnmrHdrList = [ 'data.h',
+                'errorcodes.h' ]
+
+vwacqPath     = os.path.join(cwd, os.pardir, 'vwacq')
+vwacqHdrList = [ 'hostAcqStructs.h' ]
+
+
+# source files
+fileList = ['b12proc.c',
+            'b12funcs.c',
+            'conf.c',
+            'mtune.c',
+            'spincore.c' ]
+
+incPath = os.path.join(cwd, os.pardir, 'spinapi', 'spinapi')
+spinapiPath = os.path.join(cwd, os.pardir, 'spinapi', 'spinapi','lib')
+# build environment
+env = Environment(CCFLAGS    = '-std=gnu99 -m32 -O2 -Wall',
+                  CPPDEFINES = ['LINUX','NIRVANA'],
+                  LINKFLAGS  = '-std=gnu99 -m32 -Wl,-rpath,/vnmr/lib',
+                  CPPPATH    = [cwd, incPath])
+
+# actual build
+progObjs = env.Object([fileList,
+                       expProcFileList,
+                       ncommFileList,
+                       procProcFileList])
+
+prog = env.Program(target  = target,
+                         LIBPATH = [cwd,spinapiPath],
+                         source  = [progObjs],
+                         LIBS    = ['spinapi', 'm'])
+
+buildMethods.makeSymLinks(env, prog, cwd, procProcPath, procProcHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, procProcPath, procProcFileList)
+buildMethods.makeSymLinks(env, prog, cwd, expProcPath,  expProcFileList)
+buildMethods.makeSymLinks(env, prog, cwd, expProcPath,  expProcHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, ncommPath, ncommHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, ncommPath, ncommFileList)
+buildMethods.makeSymLinks(env, prog, cwd, vnmrPath, vnmrHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, vwacqPath, vwacqHdrList)
+
+# define with absolute path where built files will be copied
+path = os.path.join(cwd, os.pardir, os.pardir,
+                        os.pardir, 'console','b12', 'acqbin')
+
+# make sure the path(s) exist
+if not os.path.exists(path):
+   os.makedirs(path)
+
+# actions to be performed after targets are built
+env.AddPostAction(prog, Action(Copy(path, os.path.join(cwd, target))))
+
+# debug build
+env.Program(target  = target2,
+                         LIBPATH = [cwd],
+                         source  = [progObjs,
+                                    'stubs.c'],
+                         LIBS    = ['m'])
+

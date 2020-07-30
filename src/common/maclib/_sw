@@ -1,0 +1,9 @@
+"macro _sw"
+
+$maxnp = 256*1024
+setlimit('np',$maxnp,32,-2)
+np=np
+_at
+setlimit('at',100.0,1e-6,1e-6)
+setlimit('sp',parmax[5],-parmax[5],0)
+setlimit('wp',parmax[5],0,0)

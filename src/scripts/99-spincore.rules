@@ -1,0 +1,5 @@
+SUBSYSTEMS=="usb"
+ATTRS{idVendor}="0403"
+ATTRS{idProduct}="c1a9"
+GROUP="nmr"
+# GROUP="spincore"

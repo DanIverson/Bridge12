@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# set -x
+# ovjBuildDir="/home/dannuc/ovjbuild"
+
+buildDir=$ovjBuildDir
+echo "build directory is $buildDir"
+
+# home=/home/vnmr1
+# home=/home/dannuc
+# workdir=$home/ovjbuild
+# srcdir=$workdir/OpenVnmrJ/src
+
+cd $buildDir/OpenVnmrJ/src/spinapi
+rm -rf spinapi
+unzip -q SpinCore_Linux_API_20181115_Universal.tar.gz
+# Remove 32-bit libs
+rm -rf spinapi/src/FTD2XX/Linux/arm926
+# Remove Windows libraries
+rm -rf spinapi/src/FTD2XX/amd64 $dir/spinapi/src/FTD2XX/i386
+# Remove static libs
+rm -f spinapi/src/FTD2XX/Linux/libftd2xx.a
+# Remove compiled objects
+rm -rf spinapi/src/.temp
+rm -f spinapi/lib/libspinapi.so
+rm -f spinapi/examples/General/pb_debug
+rm -f spinapi/examples/General/pb_read_firmware
+rm -f spinapi/examples/General/pb_start
+rm -f spinapi/examples/General/pb_stop
+rm -f spinapi/examples/RadioProcessor/awg
+rm -f spinapi/examples/RadioProcessor/CYCLOPS_nmr
+rm -f spinapi/examples/RadioProcessor/DirectCapture
+rm -f spinapi/examples/RadioProcessor/excite_test
+rm -f spinapi/examples/RadioProcessor/singlepulse_nmr
+cp -r Makefile.linux.general spinapi/examples/General/Makefile.linux
+cp -r Makefile.linux32 spinapi/src/.
+
+cd spinapi/src
+
+destdir=$buildDir/console/b12/lib
+if [ ! -d $destdir ]; then
+   mkdir -p $destdir
+fi
+make -f Makefile.linux clean >& /dev/null
+make -f Makefile.linux32
+cp ../lib/libspinapi.so $destdir/libspinapi.32bit
+cp ../lib/libspinapi.so $destdir/libspinapi.so
+rm -rf .temp
+cd ../examples/General
+make -f Makefile.linux
+rm -f ../lib/libspinapi.so
+
+destdir=$buildDir/vnmr
+if [ ! -d $destdir ]; then
+   mkdir -p $destdir
+fi
+
+cd $buildDir/OpenVnmrJ/src/spinapi
+cp -r spinapi $destdir/.

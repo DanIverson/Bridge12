@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ ! 
+ ! Copyright (C) 2015  University of Oregon
+ ! You may distribute under the terms of either the GNU General Public
+ ! License or the Apache License, as specified in the LICENSE file.
+ ! For more information, see the LICENSE file.
+ !
+ -->
+
+<template name="vconfig" element="pages" type="acquisition" >
+  <group size="400 150"
+    style="Heading1"
+    label="Flags"
+    bg=""
+    border="None"
+    side="Top"
+    justify="Left"
+    tab="yes"
+    enable="no"
+    reference="vconfig"
+    useref="no"
+    subtype="Basic"
+    expanded="yes"
+    >
+    <group loc="20 140" size="260 30"
+      show="exists(systemdir+'/conpar','file','rw'):$VALUE $VALUE=1-$VALUE"
+      bg=""
+      border="None"
+      tab="no"
+      enable="no"
+      useref="no"
+      subtype="Convenience"
+      >
+      <label loc="0 10" size="260 20"
+        style="Heading1"
+        label="Changes will be lost upon exiting VnmrJ"
+        />
+    </group>
+    <menu loc="190 10" size="180 20"
+      style="PlainText"
+      vq="system"
+      vc="system='$VALUE'"
+      set="$VALUE=system"
+      >
+      <mlabel 
+        label="Spectrometer"
+        chval="spectrometer"
+        />
+      <mlabel 
+        label="Data station"
+        chval="datastation"
+        />
+    </menu>
+    <menu loc="190 100" size="180 20"
+      style="PlainText"
+      vq="bnc"
+      vc="bnc=$VALUE"
+      set="$VALUE=bnc"
+      >
+      <mlabel 
+        label="BNC0"
+        chval="0"
+        />
+      <mlabel 
+        label="BNC1"
+        chval="1"
+        />
+    </menu>
+    <entry loc="190 70" size="180 20"
+      style="PlainText"
+      vq="lockfreq"
+      vc="lockfreq=$VALUE"
+      set="$VALUE=lockfreq"
+      digits="7"
+      />
+    <label loc="10 100" size="170 20"
+      style="Label1"
+      label="Microwave connection"
+      />
+    <label loc="10 70" size="170 20"
+      style="Label1"
+      label="Lock Frequency"
+      />
+    <label loc="10 10" size="170 20"
+      style="Label1"
+      label="System"
+      />
+    <label loc="10 40" size="170 20"
+      style="Label1"
+      label="Proton Frequency"
+      />
+    <label loc="190 40" size="170 20"
+      style="Label1"
+      label="14 MHz"
+      />
+  </group>
+</template>

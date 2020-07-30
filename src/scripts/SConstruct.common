@@ -1,0 +1,244 @@
+from __future__ import print_function
+import os
+import sys
+
+# MAC -> darwin, Linux -> linux2
+platform = sys.platform
+
+print('SConstruct.common')
+#get current working directory
+cwd = os.getcwd()
+
+
+obsoleteList = 	['isjpsgup',
+                'killjpsg',
+               'lnvsetacq2',
+               'loadkernel',
+               'tryquitjpsg',
+               'Vn',
+               'vnmr']
+
+acqList    = 	['bootr',
+                'cryoclient',
+                'cryomon',
+                'execkillacqproc',
+                'killstat',
+                'makesuacqproc',
+                'protune',
+                'rmipcs',
+                'set_tunehw'
+		]
+
+ddrAcqList  =   [
+                'mkprobeifc',
+                'probeid',
+                'probe_mount',
+                'probe_unmount',
+	        'restore3x',
+                'rsu_bt_setup',
+                ]
+
+fileList    = 	['adddevices',
+                'calcramp',
+                'chkinstall',
+                'chksudocmd',
+                'cln3dwait',
+                'convertgeom',
+                'craftQnmr',
+                'create_pgsql_user',
+		'dbsetup',
+                'dbupdate',
+                'dicom_ping',
+                'dicom_store',
+                'diffparam',
+                'doAcct',
+                'dtsharcntrl',
+                'enter',
+                'fixpsg',
+                'getgroup',
+                'getuserinfo',
+                'htmltopdf',
+                'installpkgs',
+                'jdeluser',
+                'jtestgroup',
+                'jtestuser',
+                'jvnmruser',
+                'killft3d',
+                'loginpassword',
+                'loginpasswordcheck',
+                'loginpasswordVJ',
+                'makeadminfiles',
+                'makeuser',
+                'managedb',
+                'managelnxdev',
+                'ovjcraft',
+                'ovjDiag',
+                'ovjGetManuals',
+                'ovjGetpipe',
+                'ovjPasswd',
+                'ovjUpdate',
+                'ovjUser',
+                'ovjWallPaper',
+                'patchinstall_ver1',
+                'patchinstall',
+                'patchmake',
+                'patchuninstall',
+                'protopub',
+                'psggen',
+                'S99pgsql',
+                'seqgen',
+                'seqgenupdate',
+                'setacq',
+                'setNIC',
+                'setupbashenv',
+                'setuserpsg',
+                'showcraftbglog',
+                'simplemovie',
+                'status',
+                'submit2craft',
+                'sudoins',
+                'turbovnc',
+                'turbovncsetup',
+                'turbovncserver',
+                'update_OpenVnmrJ',
+                'vbg',
+                'vcmdm',
+                'vcmdr',
+                'vjhelp',
+                'vnmr_accounting',
+                'vnmr_cdump',
+                'vnmr_color',
+                'vnmr_fallocate',
+                'vnmr_gs',
+                'vnmr_ihelp',
+                'vnmr_jplot',
+                'vnmr_open',
+                'vnmr_options',
+                'vnmr_setgauss',
+                'vnmr_showfit',
+                'vnmr_singleline',
+                'vnmr_spinner',
+                'vnmr_temp',
+                'vnmr_textedit',
+                'vnmr_uname',
+                'vnmr_usemark',
+                'vnmr_vi',
+                'vnmrauto',
+                'vnmrbayes',
+                'vnmredit',
+                'vnmremail',
+                'vnmrj',
+                'vnmrlp',
+                'vnmrpipe',
+                'vnmrplot',
+                'vnmrprint',
+                'vnmrseqgen',
+                'vnmrshell',
+                'vxrTool',
+                'xmlToCsv',
+                'wtgen']
+
+pythonScriptFiles = [ 'cmpsha1.py',
+                      'modxorg.py',
+                'sha1snapshot.py' ]
+
+scriptFiles = [ 'vwScript',
+             'vwScriptPPC',
+             'vwAutoScript' ]
+
+InterixScriptFiles = [ 'makeuser_interix' ]
+
+vnmrBinPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'vnmr','bin')
+if not os.path.exists(vnmrBinPath) :
+    os.makedirs(vnmrBinPath)
+
+for i in fileList:
+   dest = os.path.join(vnmrBinPath,i)
+   Execute(Copy(dest,i+'.sh'))
+   Execute(Chmod(dest,0o755))
+
+for i in pythonScriptFiles:
+   dest = os.path.join(vnmrBinPath,i)
+   Execute(Copy(dest,i))
+   Execute(Chmod(dest,0o755))
+
+dest = os.path.join(vnmrBinPath,'addhttp.pl')
+Execute(Copy(dest,'addhttp.pl'))
+
+dest = os.path.join(vnmrBinPath,'p_install')
+Execute(Copy(dest,'p_install'))
+Execute(Chmod(dest,0o644))
+dest = os.path.join(vnmrBinPath,'muttrc')
+Execute(Copy(dest,'muttrc'))
+Execute(Chmod(dest,0o644))
+
+if ('darwin' in platform):
+   i = "com.edb.launchd.postgresql.plist"
+   dest = os.path.join(vnmrBinPath,i)
+   Execute(Copy(dest,i))
+   Execute(Chmod(dest,0o755))
+
+if ( ('darwin' not in platform) and ('interix' not in platform) ):
+   for i in acqList:
+      dest = os.path.join(vnmrBinPath,i)
+      Execute(Copy(dest,i+'.sh'))
+      Execute(Chmod(dest,0o755))
+
+   acqPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'console','ddr','bin')
+   if not os.path.exists(acqPath) :
+       os.makedirs(acqPath)
+   for i in ddrAcqList:
+      dest = os.path.join(acqPath,i)
+      Execute(Copy(dest,i+'.sh'))
+      Execute(Chmod(dest,0o755))
+
+   vnmrAcqBinPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'vnmr','acqbin')
+   if not os.path.exists(vnmrAcqBinPath) :
+       os.makedirs(vnmrAcqBinPath)
+   dest = os.path.join(vnmrAcqBinPath,'rc.vnmr')
+   Execute(Copy(dest,'rc.vnmr.sh'))
+   Execute(Chmod(dest,0o644))
+   dest = os.path.join(vnmrAcqBinPath,'99-CP210x.rules')
+   Execute(Copy(dest,'99-CP210x.rules'))
+   dest = os.path.join(vnmrAcqBinPath,'99-spincore.rules')
+   Execute(Copy(dest,'99-spincore.rules'))
+   Execute(Chmod(dest,0o644))
+   dest = os.path.join(vnmrAcqBinPath,'startStopProcs')
+   Execute(Copy(dest,'startStopProcs.sh'))
+   Execute(Chmod(dest,0o755))
+   dest = os.path.join(vnmrAcqBinPath,'ovjProcs')
+   Execute(Copy(dest,'ovjProcs.sh'))
+   Execute(Chmod(dest,0o755))
+   dest = os.path.join(vnmrAcqBinPath,'vnmr.service')
+   Execute(Copy(dest,'vnmr.service.sh'))
+   Execute(Chmod(dest,0o644))
+   dest = os.path.join(vnmrBinPath,'airjet')
+   Execute(Copy(dest,'airjet.sh'))
+   Execute(Chmod(dest,0o755))
+   acqPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'console','inova','bin')
+   if not os.path.exists(acqPath) :
+       os.makedirs(acqPath)
+   dest = os.path.join(acqPath,'loadkernel')
+   Execute(Copy(dest,'loadkernel.sh'))
+   Execute(Chmod(dest,0o755))
+   acqPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'console','mercury','bin')
+   if not os.path.exists(acqPath) :
+       os.makedirs(acqPath)
+   dest = os.path.join(acqPath,'loadkernel')
+   Execute(Copy(dest,'loadkernel.sh'))
+   Execute(Chmod(dest,0o755))
+
+   acqPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'console','inova','acq')
+   if not os.path.exists(acqPath) :
+       os.makedirs(acqPath)
+   acq2Path = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'console','mercury','acq')
+   if not os.path.exists(acq2Path) :
+       os.makedirs(acq2Path)
+   for i in scriptFiles:
+      dest = os.path.join(acqPath,i)
+      Execute(Copy(dest,i+'.sh'))
+      Execute(Chmod(dest,0o755))
+      dest = os.path.join(acq2Path,i)
+      Execute(Copy(dest,i+'.sh'))
+      Execute(Chmod(dest,0o755))
+

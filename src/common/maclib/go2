@@ -1,0 +1,83 @@
+"macro go2"
+
+$pseq=systemdir+'/psglib/'+seqfil
+exists($pseq,'file'):$e
+if (not $e) then
+  write('error','Pulse sequence %s does not exist',seqfil)
+  return
+endif
+$pseq=$pseq+'.sh'
+exists($pseq,'file'):$e
+if (not $e) then
+  write('error','Pulse sequence %s does not exist',seqfil)
+  return
+endif
+
+delete(curexp+'/rawfid.jdx'):$e
+groupcopy('current','processed')
+$ni=0
+if (arraydim>1) and (array='pw') then
+  $num=arraydim
+else
+  $num=1
+endif
+write('line3','Acquisition started')
+
+while $ni < $num do
+  $ni=$ni+1
+$i=1
+$val=curexp+'/rawfid'
+  $arg[$i]=$val $i=$i+1
+format(np/2,0,0):$val
+  $arg[$i]=$val $i=$i+1
+format(nt,0,0):$val
+  $arg[$i]=$val $i=$i+1
+format(sfrq,'lower'):$val
+  $arg[$i]=$val $i=$i+1
+format(sw/1000,'lower'):$val
+  $arg[$i]=$val $i=$i+1
+format(pw[$ni],'lower'):$val
+  $arg[$i]=$val $i=$i+1
+format(tpwrf/100.0,'lower'):$val
+  $arg[$i]=$val $i=$i+1
+format(d1,'lower'):$val
+  $arg[$i]=$val $i=$i+1
+format(alfa+rof2,'lower'):$val
+  $arg[$i]=$val $i=$i+1
+$val='0'
+$debug=0
+if ($# = 2) then
+  if ($2='debug') then
+    $val='1'
+    $debug=1
+  endif
+endif
+  $arg[$i]=$val $i=$i+1
+$argNo=$i-1
+$i=0
+$args=''
+while $i < $argNo do
+  $i=$i+1
+  $args=$args+' '+$arg[$i]
+endwhile
+
+if ($debug) then
+  shell($pseq+$args+' > /vnmr/tmp/psg;cat'):$dum
+else
+  shell($pseq+$args):$dum
+endif
+exists(curexp+'/rawfid.jdx','file'):$e
+if ($e) then
+  clear(2)
+  write('line3','Acquisition %d complete',$ni)
+  rtb12(curexp+'/rawfid.jdx',$ni)
+  if ($1 = 'ga') then
+    wft
+  elseif ($1 = 'au') and (wexp <> '') then
+    exec(wexp)
+  endif
+else
+  write('line3','Acquisition failed')
+  return
+endif
+endwhile

@@ -1,0 +1,95 @@
+#! /bin/bash
+#
+#  Script to build an OVJ-Bridge12 release.
+#  Typically, one would make a directory, e.g., at $HOME/ovjbuild. Put the
+#  ovjTools into that directory and then copy the bin directory from the
+#  ovjTools directory to the ovjbuild directory with the command
+#  cp -r ovjTools/bin .
+#
+#  ovjBuildDir    defines where the git-repo will be built.
+#  workspacedir   used by ovjdvd and defines where the DVD images will be built.
+#  OVJ_TOOLS      parameter should point to the ovjTools directory. The ovjTools
+#                 directory does not necessarily need to be in the same directory as the
+#                 git-repo directory, although that may be a convenient place.
+#  dvdBuildName1  name of the DDR / DD2 image
+#
+#  doScons=yes    to run scons
+#  doScons=no     to not run scons. This also avoids removing directories
+#                 and does not change the git repo.
+#                 Use this if you are just making a DVD from pre-built files
+#  doGitClone=yes     to get a new repo.
+#  doGitClone=rebuild to do a new checkout of "src"
+#  doGitClone=pull    to pull recent changes to the repo and do a new checkout of "src"
+#  doGitClone=no      to leave the current repo alone
+#  mail_list      addresses to email status of the build
+#  gitURL         URL for git repo.
+#  ovjConsole     flag to tell whether to include console software
+#  sconsJoption   helps speed up the process. Typical value is #CPUs+1
+#
+# set -x
+
+ovjBuildDir=$(dirname "$(readlink -f $0))")
+ovjBuildDir=$(dirname "${ovjBuildDir}")
+ovjBuildDir=$(dirname "${ovjBuildDir}")
+workspacedir=$ovjBuildDir
+OVJ_TOOLS=$ovjBuildDir/ovjTools
+
+
+shortDate=$(date +%F)
+dvdBuildName1=dvdimageB12
+nprocs=$(nproc)   
+sconsJoption=$(( nprocs + 1 ))
+# sconsJoption=1
+
+doGitClone=pull
+if [ ! -d "${ovjBuildDir}/OpenVnmrJ" ]
+then
+   doGitClone=yes
+fi
+doGitToolsClone=pull
+if [ ! -d "${ovjBuildDir}/ovjTools" ]
+then
+   doGitToolsClone=yes
+fi
+
+gitURL='https://github.com/OpenVnmrJ/OpenVnmrJ.git'
+gitSSH='ssh://git@github.com/userName/OpenVnmrJ.git'
+gitSSH=''
+# If gitSSH is an empty string, the gitURL is used
+# If you plan to commit changes to the OpenVnmrJ project,
+# you should use the ssh protocol on your fork of the OpenVnmrJ project.
+# Replace the userName string in gitSSH with your github account name
+# and comment out the second gitSSH line (gitSSH='')
+
+gitBranch='master'
+# If you plan to commit changes, you should commit them to the development branch.
+# If you just want to build the latest official release, build from the master branch.
+# gitBranch='development'
+
+doScons=yes
+buildB12=yes
+
+# Potential optional set of values
+# doGitClone=yes
+# doGitClone=rebuild
+# doGitClone=pull
+doGitClone=no
+# mail_list=""
+# doScons=no
+# buildB12=no
+# sconsJoption=5
+
+date=$(date +%F_%H_%M_%S)
+if [ ! -d "${ovjBuildDir}/logs" ]
+then
+   mkdir -p "${ovjBuildDir}/logs"
+fi
+ovjLogFile="${ovjBuildDir}/logs/makeovj.$date"
+echo "log file is $ovjLogFile"
+echo "You can monitor the build with the command"
+echo "tail -f $ovjLogFile"
+
+cd "${ovjBuildDir}"
+export ovjBuildDir workspacedir OVJ_TOOLS dvdBuildName1 ovjLogFile doScons buildB12 doGitClone mail_list gitURL gitSSH gitBranch sconsJoption doGitToolsClone
+"${ovjBuildDir}/Bridge12/bin/makeb12" > "${ovjLogFile}" 2>&1
+

@@ -1,0 +1,156 @@
+# 
+
+MAKEFILE= makeuserpsg.lnx
+
+#-----  The system and user PSG directories
+PSG_DIR= $(vnmrsystem)/psg/
+LIB_DIR= $(vnmrsystem)/lib/
+USR_PSG_DIR= $(vnmruser)/psg/
+
+#-----  Normal operational compile flags
+CDEFINE= -DLINUX -DNESSIE -Wno-format
+CFLAGS= -O -fPIC -m32 -c
+CPPFLAGS= -U_FORTIFY_SOURCE
+LDFLAGS= -shared -m32
+COMPILE.c= $(CC) $(CFLAGS) $(CPPFLAGS) $(CDEFINE) -c
+LINK.c= $(CC) $(LDFLAGS)
+
+#-----  Link commands for needed sources and makefile
+PSG_LN= ln -s $(PSG_DIR)$(@)
+SO_LIB_VER=6.0
+
+#------------------------------------------------------------------------
+#-----  PSG sources files 
+#------------------------------------------------------------------------
+
+PSG_SRC=			\
+                abort.c         \
+                active.c        \
+		arrayfuncs.c	\
+		b12funcs.c      \
+                conf.c          \
+                cps.c           \
+                getparm.c       \
+		hash.c		\
+		if.c		\
+		initacqparms.c	\
+                P_receive.c     \
+		phase.c         \
+		presequence.c   \
+                psg.c           \
+                sendasync.c     \
+                setparm.c       \
+		signalhandler.c	\
+                stubs.c         \
+		treefuncs.c	\
+		xmath.c
+
+DPS_DUMMY_SRC=			\
+                x_ps.c
+
+DPS_DUMMY_OBJ= $(DPS_DUMMY_SRC:.c=.o)
+
+PSG_OBJ= $(PSG_SRC:.c=.o)
+
+#-----  Acqproc header files that are needed
+PSG_HDR=			\
+		abort.h		\
+		acqparms.h	\
+		allocate.h	\
+		arrayfuncs.h	\
+		cps.h		\
+		CSfuncs.h	\
+		data.h		\
+		dpsdef.h	\
+		group.h		\
+		init.h		\
+		macros.h	\
+		params.h	\
+		phase.h		\
+		pvars.h		\
+		standard.h	\
+		symtab.h	\
+		tools.h		\
+		variables.h	\
+		vfilesys.h	\
+		vnmrsys.h	\
+		wjunk.h
+
+ALLOBJ= $(PSG_OBJ) $(DPS_DUMMY_OBJ)
+
+
+#-----  All sources and headers are required for compilation
+ALLSRC=	$(PSG_SRC) $(PSG_HDR) $(DPS_DUMMY_SRC)
+ALL_C_SRC=$(PSG_SRC) $(DPS_DUMMY_SRC)
+LIBS=	-lm
+
+
+#------------------------------------------------------------------------
+#-----  Targets
+#------------------------------------------------------------------------
+
+lib : message Source libpsglib.so
+	@echo
+	@echo PSG Library Complete.
+
+fixlib : message libpsglib.so libpsglib.a
+	@echo
+	@echo PSG Library Complete.
+
+message:
+	@echo Compiling Linux PSG Library...
+	( rm -f libpsglib*)					\
+
+maclib : macmessage Source maclibpsglib.a
+	@echo
+	@echo PSG Library Complete.
+
+macfixlib : macmessage
+	( $(MAKE) -f $(MAKEFILE) "CDEFINE= -DLINUX -DNESSIE -DMACOS" maclibpsglib.a)
+	@echo
+	@echo PSG Library Complete.
+
+macmessage:
+	@echo Compiling Mac PSG Library...
+	( rm -f libpsglib*)					\
+
+#------------------------------------------------------------------------
+#-----  Recursive Targets
+#------------------------------------------------------------------------
+Source :
+	@echo Creating additional source links...
+	( cd $(USR_PSG_DIR); $(MAKE) -f $(MAKEFILE) src )
+
+src :	$(MAKEFILE) $(ALLSRC)
+
+libpsglib.a : $(PSG_OBJ)
+	@(umask 2; ar r $@ $(PSG_OBJ) >/dev/null 2>&1 )
+
+maclibpsglib.a : $(PSG_OBJ)
+	@(umask 2; libtool -static -o libpsglib.a $(PSG_OBJ) )
+
+libpsglib.so : $(PSG_OBJ)
+	@(umask 2; $(LINK.c) -Wl,-soname,$@ -o $@.$(SO_LIB_VER) $(PSG_OBJ) $(CND_PSG_OBJ))
+	@(umask 2; ln -s $@.$(SO_LIB_VER) $@)
+
+depend: src
+	makedepend -f $(MAKEFILE) -Y $(CDEFINE) $(ALL_C_SRC) 2>/dev/null
+
+#------------------------------------------------------------------------
+#-----  Object dependencies
+#------------------------------------------------------------------------
+
+$(PSG_OBJ) : $(@:.o=.c)
+	(umask 2; $(COMPILE.c) -DPSG_LC $(@:.o=.c) )
+
+#-----  Source extraction via soft links
+#------------------------------------------------------------------------
+
+$(PSG_SRC) $(PSG_HDR) : % :$(PSG_DIR)%
+	$(PSG_LN) $@
+
+$(DPS_DUMMY_SRC) : % :$(PSG_DIR)%
+	$(PSG_LN) $@
+
+# DO NOT DELETE THIS LINE -- make depend uses it
+

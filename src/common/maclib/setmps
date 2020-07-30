@@ -1,0 +1,22 @@
+// setmps macro
+
+if ($# < 1) then
+  return
+endif
+if ($1 = 'power') then
+  mpspower=$2
+  write('line3','power %d',trunc(mpspower*10.0)):$cmd
+  sethw('mps',$cmd,'nowait'):$e
+elseif ($1 = 'freq') then
+  mpsfreq=$2
+  write('line3','freq %d',trunc(mpsfreq*1000000.0)):$cmd
+  sethw('mps',$cmd,'nowait'):$e
+elseif ($1 = 'getH1') then
+  return(mpsfreq/0.65933)
+elseif ($1 = 'setH1') then
+  $val=mpsfreq/0.65933
+  tof=($val-sfrq)*1e6
+  setlockfreq:$e
+elseif ($# = 1) then
+  sethw('mps',$1)
+endif

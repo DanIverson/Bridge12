@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<template name="mpstune" element="pages" type="acquisition" >
+  <group size="620 240"
+    style="Heading1"
+    label="MPS tune"
+    border="None"
+    side="Top"
+    justify="Left"
+    tab="yes"
+    enable="no"
+    reference="mpstune"
+    useref="no"
+    subtype="Untitled"
+    expanded="yes"
+    rows="1"
+    columns="1"
+    >
+    <menu loc="120 60" size="80 20"
+      style="PlainText"
+      vq="np"
+      vc="mpstune('np',$VALUE)"
+      set="$VALUE=np"
+      editable="No"
+      >
+      <mlabel 
+        label="64"
+        chval="64"
+        />
+      <mlabel 
+        label="128"
+        chval="128"
+        />
+      <mlabel 
+        label="256"
+        chval="256"
+        />
+      <mlabel 
+        label="512"
+        chval="512"
+        />
+      <mlabel 
+        label="1024"
+        chval="1024"
+        />
+      <mlabel 
+        label="2048"
+        chval="2048"
+        />
+    </menu>
+    <textmessage loc="120 110" size="65 20"
+      style="PlainText"
+      label="3.2"
+      vq="np"
+      set="$VALUE=np*0.05/2.0"
+      />
+    <textmessage loc="120 210" size="65 20"
+      style="PlainText"
+      label="14.4085"
+      vq="sfrq"
+      set="$VALUE=sfrq"
+      />
+    <textmessage loc="120 185" size="65 20"
+      style="PlainText"
+      label="14.4086"
+      vq="mpsfreq"
+      set="setmps('getH1'):$VALUE"
+      />
+    <slider loc="120 5" size="345 25"
+      style="PlainText"
+      vq="mpsfreq"
+      vc="mpstune('setfreq',$VALUE)"
+      set="$VALUE=mpsfreq"
+      digital="true"
+      min="8.0"
+      max="9.9"
+      incr1="0.00001"
+      incr2="0.1"
+      digits="8"
+      />
+    <label loc="75 110" size="40 20"
+      style="Label1"
+      label="sec"
+      justify="Left"
+      />
+    <label loc="5 110" size="70 20"
+      style="Label1"
+      label="Scan time"
+      justify="Left"
+      />
+    <label loc="75 85" size="40 20"
+      style="Label1"
+      label="dBm"
+      justify="Left"
+      />
+    <label loc="5 85" size="70 20"
+      style="Label1"
+      label="Tune Power"
+      justify="Left"
+      />
+    <slider loc="120 80" size="345 25"
+      style="PlainText"
+      vq="tupwr"
+      vc="mpstune('tupwr',$VALUE)"
+      digital="true"
+      min="0"
+      max="40"
+      incr1="0.1"
+      incr2="1"
+      digits="4"
+      />
+    <label loc="75 10" size="40 20"
+      style="Label1"
+      label="GHz"
+      justify="Left"
+      />
+    <label loc="75 35" size="40 20"
+      style="Label1"
+      label="MHz"
+      justify="Left"
+      />
+    <label loc="5 210" size="105 20"
+      style="Label1"
+      label="H1 MHz (current)"
+      justify="Left"
+      />
+    <label loc="5 185" size="120 20"
+      style="Label1"
+      label="H1 MHz (from MPS)"
+      justify="Left"
+      />
+    <label loc="5 160" size="100 20"
+      style="Label1"
+      label="Vertical position"
+      justify="Left"
+      />
+    <label loc="5 140" size="100 20"
+      style="Label1"
+      label="Vertical scale"
+      justify="Left"
+      />
+    <label loc="5 10" size="50 20"
+      style="Label1"
+      label="Center"
+      justify="Left"
+      />
+    <label loc="5 35" size="50 20"
+      style="Label1"
+      label="Span"
+      justify="Left"
+      />
+    <label loc="5 60" size="50 20"
+      style="Label1"
+      label="# Points"
+      justify="Left"
+      />
+    <menu loc="120 35" size="80 20"
+      style="PlainText"
+      vq="tunesw"
+      vc="mpstune('tunesw',$VALUE)"
+      set="$VALUE=tunesw"
+      editable="No"
+      >
+      <mlabel 
+        label="250"
+        chval="250"
+        />
+      <mlabel 
+        label="100"
+        chval="100"
+        />
+      <mlabel 
+        label="50"
+        chval="50"
+        />
+      <mlabel 
+        label="10"
+        chval="10"
+        />
+    </menu>
+    <button loc="210 210" size="80 20"
+      style="Heading2"
+      label="Set H1"
+      vc="setmps('setH1')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="480 110" size="130 40"
+      style="Heading2"
+      label="Quit"
+      vc="mpstune('quit')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="480 60" size="130 40"
+      style="Heading2"
+      label="Stop MPS Tune"
+      vc="aa('Tuning Complete') acqmode=''"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="480 10" size="130 40"
+      style="Heading2"
+      label="Start MPS Tune"
+      vc="mpstune('start')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="210 140" size="80 20"
+      style="Heading2"
+      label="Autoscale"
+      vc="vsadj mpstune('disp')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="160 160" size="40 20"
+      style="Heading2"
+      label="-20"
+      vc="vp=vp-20 mpstune('disp')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="120 160" size="40 20"
+      style="Heading2"
+      label="+20"
+      vc="vp=vp+20 mpstune('disp')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="160 140" size="40 20"
+      style="Heading2"
+      label="/2"
+      vc="vs=vs/2 mpstune('disp')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="120 140" size="40 20"
+      style="Heading2"
+      label="*2"
+      vc="vs=vs*2 mpstune('disp')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+  </group>
+</template>

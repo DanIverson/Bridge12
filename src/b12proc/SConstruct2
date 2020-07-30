@@ -1,0 +1,71 @@
+import os
+import sys
+sys.path.append(os.path.join(os.getcwd(), os.pardir, os.pardir, 'scripts'))
+import buildMethods
+
+# define target file name
+target = 'B12proc'
+
+# we need to specify an absolute path so this SConstruct file
+# can be called from any other SConstruct file
+cwd = os.getcwd()
+
+ncommPath = os.path.join(cwd, os.pardir, 'ncomm')
+SConscript(os.path.join(ncommPath, 'SConstruct'))
+
+ncommHdrList = [ 'errLogLib.h',
+                 'mfileObj.h',
+                 'ipcMsgQLib.h',
+                 'msgQLib.h',
+                 'hostAcqStructs.h',
+                 'shrstatinfo.h',
+                 'shrMLib.h' ]
+
+procProcPath     = os.path.join(cwd, os.pardir, 'procproc')
+procProcHdrList = [ 'procQfuncs.h' ]
+procProcFileList = [ 'procQfuncs.c' ]
+
+expProcPath     = os.path.join(cwd, os.pardir, 'expproc')
+expProcHdrList = [ 'expDoneCodes.h' ]
+expProcFileList = [ 'statfuncs.c' ]
+
+bexpprocPath     = os.path.join(cwd, os.pardir, 'bexpproc')
+bexpprocHdrList = [ 'shrexpinfo.h' ]
+
+# source files
+fileList = ['b12proc.c',
+            'b12funcs.c',
+             'stubs.c']
+
+incPath = os.path.join(cwd, os.pardir, 'b12', 'spinapi','inc')
+# build environment
+env = Environment(CCFLAGS    = '-m32 -O2 -Wall',
+                  LINKFLAGS  = '-m32 -Wl,-rpath,/vnmr/lib',
+                  CPPPATH    = [cwd, incPath])
+
+# actual build
+prog = env.Program(target  = target,
+                         LIBPATH = [ncommPath],
+                         source  = [fileList,
+                                    expProcFileList,
+                                    procProcFileList],
+                         LIBS    = ['ncomm'])
+
+buildMethods.makeSymLinks(env, prog, cwd, procProcPath, procProcHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, procProcPath, procProcFileList)
+buildMethods.makeSymLinks(env, prog, cwd, expProcPath, expProcFileList)
+buildMethods.makeSymLinks(env, prog, cwd, expProcPath, expProcHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, ncommPath, ncommHdrList)
+buildMethods.makeSymLinks(env, prog, cwd, bexpprocPath, bexpprocHdrList)
+
+# define with absolute path where built files will be copied
+path = os.path.join(cwd, os.pardir, os.pardir,
+                        os.pardir, 'vnmr', 'acqbin')
+
+# make sure the path(s) exist
+# if not os.path.exists(path):
+#    os.makedirs(path)
+
+# actions to be performed after targets are built
+# env.AddPostAction(prog, Action(Copy(path, os.path.join(cwd, target))))
+

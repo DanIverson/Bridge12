@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ !
+ ! Copyright (C) 2015  University of Oregon
+ ! You may distribute under the terms of either the GNU General Public
+ ! License or the Apache License, as specified in the LICENSE file.
+ ! For more information, see the LICENSE file.
+ !
+ -->
+
+<actionpanel>
+  <group size="1230 25" side="top" border="none"
+	vq="cppauseflg customflag" show="$VALUE=((customflag='n') and (cppauseflg='n'))"
+    justify="left" tab="no" reference="acq_action" useref="no" >
+  <group size="180 25" side="top" border="none"
+      subtype="Titled"
+      style="Heading2"
+      label="      " >
+    </group>
+      <label loc="10 10" size="10 25"
+        style="Label1"
+        label=""
+        />
+      <label loc="10 10" size="10 25"
+        style="Label1"
+        label=""
+        />
+    <button size="120 25" style="Heading2" label="Logout" vc="operatorlogout" enabled="yes"
+        />
+  </group>
+</actionpanel>

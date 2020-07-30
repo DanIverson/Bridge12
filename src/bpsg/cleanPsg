@@ -1,0 +1,11 @@
+#!/bin/bash
+
+rm -f *.o *.os
+rm -f abort.c abort.h
+rm -f active.c allocate.h arrayfuncs.h
+rm -f cps.h CSfuncs.h data.h dpsdef.h getparm.c group.h hash.c init.h
+rm -f makeuserpsg.lnx.bk params.h P_receive.c
+rm -f pvars.h sendasync.c setparm.c signalhandler.c stubs.c symtab.h tools.h treefuncs.c variables.h vfilesys.h vnmrsys.h wjunk.h x_ps.c
+rm -f libp*so s2pul*
+rm -f allocate.c assign.c CSfuncs.c pvars.c symtab.c tools.c variables1.c vfilesys.c
+rm -f .sconsign.dblite

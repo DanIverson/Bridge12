@@ -1,0 +1,298 @@
+"macro mpstune"
+
+// microwave cavity tune
+
+$action = 'setup'
+if ($# > 0) then
+  $action = $1
+endif
+
+"create parameters for markers"
+
+exists('marker1','parameter'):$marker
+if ($marker < 0.5) then
+  create('marker1','string')
+  create('marker2','string')
+  create('markerfrq1','real')
+  create('markerfrq2','real')
+  marker1=''
+  marker2=''
+endif
+
+"create marker persistence file"
+
+if $action='prep' then return endif
+
+"save current experiment"
+
+if ($action = 'setup') then
+  $temp=temp $pslabel=pslabel
+  on('temp'):$tempon
+
+  exists(curexp+'/tutmp','file'):$e
+  if ($e < 0.5) then
+    tmpsave('tutmp')
+    exists(curexp+'/tmptext','file'):$e
+    if $e then rm(curexp+'/tmptext'):$x endif
+    cp(curexp+'/text',curexp+'/tmptext')
+  endif
+
+  exists('mpstune','parlib'):$e,$path
+  if ($e) then
+    rtp($path)
+  else
+    write('error','parameters for mpstune do not exist')
+    return
+  endif
+  
+  if ($tempon) then
+    temp = $temp
+  else
+    temp = 'n'
+  endif
+
+  gain = tugain
+  werr=''
+  wdone=''
+//  np=256
+  in='n'
+  pad=0
+  spin = 'n'
+  ss = 0
+  bs=1
+  full
+  rp=0
+  lp=0
+  ph
+  sethw('mps','freq?'):$ok,$val
+  mpsfreq=$val*1e-6
+  sethw('mps','rfsweeppower?'):$ok,$val
+  tupwr=$val/10
+  alock='n'
+  wshim='n'
+  axis = 'h'
+  acqmode=''
+elseif ($action = 'start') then
+  wbs='mpstune(`process`)'
+  wexp='mpstune(`reset`)'
+  acqmode='mpstune'
+  if tunesw < 0.1 then tunesw = 0.1 endif
+  au('silent','mpstune')
+  clear(2)
+  menu('off')
+  f
+  write('line3','MPS tune')
+elseif ($action = 'reset') then
+  acqmode='mpstune'
+  au('silent','mpstune')
+  clear(2)
+elseif ($action = 'process') then
+  ft('noft','fidshim','nods','nopars')
+  if (acqstatus[2] = 1) then
+    clear(0) vsadj
+    mfShowAxis=1
+//  ds('rev')
+  endif
+  dss
+  dscale('rev','GHz',0,mpsfreq-(tunesw/2)*1e-9,tunesw*1e-9)
+
+"draw markers"
+
+  if tchan=1 then $mfreq=sfrq $mnuc=tn
+  elseif tchan=2 then $mfreq=dfrq $mnuc=dn
+  elseif tchan=3 then $mfreq=dfrq2 $mnuc=dn2
+  elseif tchan=4 then $mfreq=dfrq3 $mnuc=dn3
+  elseif tchan=5 then $mfreq=dfrq4 $mnuc=dn4
+  endif
+  
+  pen('graphics','integral')
+
+  if tunesw < 0.1 then tunesw = 0.1 endif
+  if (marker1 <> '') and (marker1 <> 'none') then
+    $markerset1=wcmax-sc-wc/2-($mfreq-markerfrq1)/tunesw*1e6*wc
+    move($markerset1,-20)
+    draw($markerset1,wc2max)
+    write('graphics',$markerset1 +2,wc2max-10,'%s',marker1)
+  endif
+  if (marker2 <> '') and (marker2 <> 'none') then
+    $markerset2=wcmax-sc-wc/2-($mfreq-markerfrq2)/tunesw*1e6*wc
+    move($markerset2,-20)
+    draw($markerset2,wc2max)
+    write('graphics',$markerset2+2,wc2max-10,'%s',marker2)
+  endif
+  if (marker1 = '') or (marker1 = 'none') then
+    if (tn = 'none') then $tnmark='' else $tnmark=$mnuc endif
+    move(wcmax-sc-wc/2,-20)
+    draw(wcmax-sc-wc/2,wc2max)
+    write('graphics',wcmax-sc-wc/2+2,wc2max-10,'%s',$tnmark)
+  endif
+
+
+elseif ($action = 'setfreq') then
+  if ($2 <> mpsfreq) then
+    if (acqmode='mpstune') then
+      mpsfreq=$2
+      setvalue('mpsfreq',$2,'processed')
+      acqmode=''
+      halt(' ')
+    else
+      setmps('freq',$2)
+    endif
+  endif
+elseif ($1 = 'tupwr') then
+  if ($2 <> tupwr) then
+    tupwr=$2
+    if (acqmode='mpstune') then
+      setvalue('tupwr',$2,'processed')
+      acqmode=''
+      halt(' ')
+    endif
+  endif
+elseif ($1 = 'tunesw') then
+  if ($2 <> tunesw) then
+    tunesw=$2
+    if (acqmode='mpstune') then
+      setvalue('tunesw',$2,'processed')
+      acqmode=''
+      halt(' ')
+    endif
+  endif
+elseif ($1 = 'np') then
+  if ($2 <> np) then
+    np=$2
+    if (acqmode='mpstune') then
+      setvalue('np',$2,'processed')
+      acqmode=''
+      halt(' ')
+    endif
+  endif
+elseif ($action = 'disp') then
+//  menu('ds_1','mtune')
+  clear(0)
+  mfShowAxis=1
+//  ds('rev')
+  dss
+  if tunesw < 0.1 then tunesw = 0.1 endif
+  dscale('rev','GHz',0,mpsfreq-(tunesw/2)*1e-9,tunesw*1e-9)
+//  ds('fidshim')
+
+"set marker1 frequency"
+
+elseif ($action = 'setmarker1') then
+  aa('Marker1 changed')
+  marker1=$2
+  if (marker1 <> '') and (marker1 <> 'none')  then
+    if tchan=1 then
+      $nuc=tn
+      write('line3','tn before=%s',$nuc)
+      $freq=sfrq
+      tn=marker1
+      markerfrq1=sfrq
+      tn=$nuc 
+      write('line3','tn after=%s',$nuc)
+      sfrq=$freq
+    elseif (tchan=2) then
+      $nuc=dn 
+      $freq=dfrq
+      dn=marker1
+      markerfrq1=dfrq
+      dn=$nuc 
+      dfrq=$freq
+    elseif (tchan=3) then
+      $nuc=dn2 
+      $freq=dfrq2
+      dn2=marker1
+      markerfrq1=dfrq2
+      dn2=$nuc 
+      dfrq2=$freq
+    elseif (tchan=4) then
+      $nuc=dn3 
+      $freq=dfrq3
+      dn3=marker1
+      markerfrq1=dfrq3
+      dn3=$nuc 
+      dfrq3=$freq
+    elseif (tchan=5) then
+      $nuc=dn4
+      $freq=dfrq4
+      dn4=marker1
+      markerfrq1=dfrq4
+      dn4=$nuc
+      dfrq4=$freq
+    endif
+  elseif (marker1 <> '') or (marker1 = 'none') then
+    marker1=''
+  endif
+  mpstune('start')
+
+"set marker2 frequency"
+
+elseif ($action = 'setmarker2') then
+  aa('Marker2 changed')
+  marker2=$2
+  if (marker2 <> '') and (marker2 <> 'none')  then
+    if tchan=1 then
+      $nuc=tn
+      $freq=sfrq
+      tn=marker2
+      markerfrq2=sfrq
+      tn=$nuc 
+      sfrq=$freq
+    elseif (tchan=2) then
+      $nuc=dn 
+      $freq=dfrq
+      dn=marker2
+      markerfrq2=dfrq
+      dn=$nuc 
+      dfrq=$freq
+    elseif (tchan=3) then
+      $nuc=dn2 
+      $freq=dfrq2
+      dn2=marker2
+      markerfrq2=dfrq2
+      dn2=$nuc 
+      dfrq2=$freq
+    elseif (tchan=4) then
+      $nuc=dn3 
+      $freq=dfrq3
+      dn3=marker2
+      markerfrq2=dfrq3
+      dn3=$nuc 
+      dfrq3=$freq
+    elseif (tchan=5) then
+      $nuc=dn4
+      $freq=dfrq4
+      dn4=marker2
+      markerfrq2=dfrq4
+      dn4=$nuc
+      dfrq4=$freq
+    endif
+  elseif (marker2 = '') or (marker2 = 'none') then
+    marker2=''
+  endif
+  mpstune('start')
+
+elseif ($action = 'center') then
+    $freq=mpsfreq-(tunesw/2)*1e-9 + (mpsfreq+(tunesw/2)*1e-9 - cr)
+    $freq?
+    // mpsfreq=$freq setvalue('mpsfreq',mpsfreq,'processed') halt('  ')
+//    menu('ds_1','mtune')
+    clear(0)
+    mfShowAxis=1
+    ds('rev')
+    if tunesw < 0.1 then tunesw = 0.1 endif
+    dscale('rev','GHz',0,mpsfreq-(tunesw/2)*1e-9,tunesw*1e-9)
+
+"enable graceful quitting"
+
+elseif ($action = 'quit') then
+  clear(2)
+  if (acqmode='mpstune') then
+    aa('Do not forget to STOP first')
+  endif
+  acqmode=''
+  tmpreturn('tutmp')
+  cp(curexp+'/tmptext',curexp+'/text')
+  newdg dg
+  return
+endif

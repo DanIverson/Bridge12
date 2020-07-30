@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<template name="tune" element="pages" type="sample" >
+  <group size="630 190"
+    style="Heading1"
+    label="Probe tune"
+    border="None"
+    side="Top"
+    justify="Left"
+    tab="yes"
+    enable="no"
+    reference="tune"
+    useref="no"
+    subtype="Untitled"
+    expanded="yes"
+    rows="1"
+    columns="1"
+    >
+    <menu loc="360 140" size="80 20"
+      style="PlainText"
+      label="# Points"
+      vc="np=$VALUE if (acqmode='mtune') then setvalue('np',np,'processed') halt('  ') endif"
+      set="$VALUE=np"
+      editable="No"
+      >
+      <mlabel 
+        label="128"
+        chval="128"
+        />
+      <mlabel 
+        label="256"
+        chval="256"
+        />
+      <mlabel 
+        label="512"
+        chval="512"
+        />
+      <mlabel 
+        label="1024"
+        chval="1024"
+        />
+      <mlabel 
+        label="2048"
+        chval="2048"
+        />
+    </menu>
+    <entry loc="360 60" size="60 20"
+      style="PlainText"
+      vq="tunesw"
+      vc="mtune('setspan',$VALUE*1e6)"
+      set="$VALUE=tunesw*1e-6"
+      digits="1"
+      disable="Grayed out"
+      />
+    <entry loc="360 90" size="60 20"
+      style="PlainText"
+      vq="tupwr"
+      vc="mtune('setpwr',$VALUE)"
+      set="$VALUE=tupwr"
+      digits="1"
+      disable="Grayed out"
+      />
+    <filemenu loc="120 40" size="80 20"
+      style="PlainText"
+      label="Center Frequency"
+      vq="tchan"
+      vc="mtune('setnuc','$VALUE' )"
+      set="mtune('getnuc'):$VALUE"
+      file="$VALUE=userdir+'/persistence/mtune_nuc'"
+      type="file"
+      bg="VJBackground"
+      editable="No"
+      statshow="yes"
+      elastic="no"
+      display="yes"
+      />
+    <button loc="480 40" size="130 40"
+      style="Heading2"
+      label="Start Probe Tune"
+      vc="mtune('start')"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="480 140" size="130 40"
+      style="Heading2"
+      label="Quit"
+      vc="mtune('quit')"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="480 90" size="130 40"
+      style="Heading2"
+      label="Stop Probe Tune"
+      vc="aa('Tuning Complete') acqmode=''"
+      bg="transparent"
+      justify="Center"
+      decor1="yes"
+      />
+    <label loc="10 160" size="100 20"
+      style="Label1"
+      label="Vertical position"
+      justify="Left"
+      />
+    <button loc="210 140" size="80 20"
+      style="Heading2"
+      label="Autoscale"
+      vc="vsadj mtune('disp')"
+      justify="Center"
+      decor1="yes"
+      />
+    <entry loc="210 40" size="80 20"
+      style="PlainText"
+      vq="tn"
+      vc="mtune('setnuc','$VALUE' )"
+      set="mtune('getnuc'):$VALUE"
+      digits="0"
+      disable="Grayed out"
+      />
+    <label loc="420 40" size="40 20"
+      style="Label1"
+      label="MHz"
+      justify="Left"
+      />
+    <label loc="420 60" size="40 20"
+      style="Label1"
+      label="MHz"
+      justify="Left"
+      />
+    <entry loc="360 40" size="60 20"
+      style="PlainText"
+      vq="sfrq"
+      vc="mtune('setfreq',$VALUE)"
+      set="mtune('getfreq'):$VALUE"
+      digits="2"
+      disable="Grayed out"
+      />
+    <label loc="310 40" size="50 20"
+      style="Label1"
+      label="Freq"
+      justify="Left"
+      />
+    <label loc="310 60" size="50 20"
+      style="Label1"
+      label="Span"
+      justify="Left"
+      />
+    <label loc="310 90" size="50 20"
+      style="Label1"
+      label="Power"
+      justify="Left"
+      />
+    <label loc="310 140" size="50 20"
+      style="Label1"
+      label="# Points"
+      justify="Left"
+      />
+    <button loc="160 160" size="40 20"
+      style="Heading2"
+      label="-20"
+      vc="vp=vp-20 mtune('disp')"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="120 160" size="40 20"
+      style="Heading2"
+      label="+20"
+      vc="vp=vp+20 mtune('disp')"
+      justify="Center"
+      decor1="yes"
+      />
+    <button loc="160 140" size="40 20"
+      style="Heading2"
+      label="/2"
+      vc="vs=vs/2 mtune('disp')"
+      justify="Center"
+      decor1="yes"
+      />
+    <label loc="10 140" size="100 20"
+      style="Label1"
+      label="Vertical scale"
+      justify="Left"
+      />
+    <button loc="120 140" size="40 20"
+      style="Heading2"
+      label="*2"
+      vc="vs=vs*2 mtune('disp')"
+      justify="Center"
+      decor1="yes"
+      />
+    <label loc="420 90" size="40 20"
+      style="Label1"
+      label="dB"
+      justify="Left"
+      />
+    <label loc="10 40" size="110 20"
+      style="Label1"
+      label="Center Frequency"
+      />
+  </group>
+</template>

@@ -1,0 +1,273 @@
+"macro mtune_ddr"
+
+// probe tune
+
+$action = 'setup'
+if ($# > 0) then
+  $action = $1
+endif
+
+"create parameters for markers"
+
+exists('marker1','parameter'):$marker
+if ($marker < 0.5) then
+  create('marker1','string')
+  create('marker2','string')
+  create('markerfrq1','real')
+  create('markerfrq2','real')
+  marker1=''
+  marker2=''
+endif
+
+"create marker persistence file"
+
+if ($action = 'setup') or ($action = 'prep') then
+  "Read nuclei present in probe file"
+  $out=userdir+'/persistence/mtune_nuc'
+  getProbePath:$e,$probe
+  if ($e=0) then $probe='none' endif
+  write('reset',$out)
+
+  if $probe='none' then     "For imaging, no probe file set"
+    write('file',$out,'"H1" H1')
+    write('file',$out,'"H2" H2')
+    write('file',$out,'"C13" C13')
+    write('file',$out,'"F19" F19')
+    write('file',$out,'"P31" P31')
+    write('file',$out,'"Na23" Na23')
+    write('file',$out,'"Xe129" Xe129')
+  else  "Read nuclei present in probe file"
+    lookup('file',$probe)
+    repeat
+      lookup('readline'):$string,$nret
+      $b=''
+      strstr($string,'dmf '):$a,$b
+      if ($b<>'') and ($b<>'lkgn_') and ($b<>'lkpwr_') then
+        write('file',$out,'"'+$b+'" '+$b)
+      endif
+    until ($nret=0)
+  endif
+  if $action='prep' then return endif
+endif
+
+"save current experiment"
+
+$hfmode='n'
+if ($action = 'setup') then
+  $temp=temp $pslabel=pslabel
+  exists('hfmode','parameter','current'):$e
+  if ($e) then
+    $hfmode=hfmode
+  endif
+  on('temp'):$tempon
+
+  exists(curexp+'/tutmp','file'):$e
+  if ($e < 0.5) then
+    tmpsave('tutmp')
+    exists(curexp+'/tmptext','file'):$e
+    if $e then rm(curexp+'/tmptext'):$x endif
+    cp(curexp+'/text',curexp+'/tmptext')
+  endif
+
+  exists('mtune','parlib'):$e,$path
+  if ($e) then
+    rtp($path)
+  else
+    write('error','parameters for mtune do not exist')
+    return
+  endif
+  
+  if ($tempon) then
+    temp = $temp
+  else
+    temp = 'n'
+  endif
+
+  if ($hfmode <> 'n') then
+    exists('hfmode','parameter'):$e
+    if ($e <= 0.5) then
+      create('hfmode','flag')
+      setprotect('hfmode','on',1)
+      hfmode=''
+    endif
+    hfmode=$hfmode
+  endif
+
+  gain = tugain
+  werr=''
+  wdone=''
+  in='n'
+  pad=0
+  spin = 'n'
+  ss = 0
+  bs=1
+  full
+  av
+  alock='n'
+  wshim='n'
+  axis = 'h'
+elseif ($action = 'start') then
+  wbs='mtune(`process`)'
+  wexp='mtune(`reset`)'
+  acqmode='mtune'
+  if tunesw < 0.1 then tunesw = 0.1 endif
+  au('silent','tune')
+  clear(2)
+  menu('off')
+  f
+elseif ($action = 'reset') then
+  au('silent','tune')
+  clear(2)
+elseif ($action = 'process') then
+  ft('noft','fidshim','nods','nopars')
+//  dss
+//  dfs
+  if (acqstatus[2] = 1) then
+//    menu('ds_1','mtune')
+    clear(0) vsadj
+    mfShowAxis=1
+  endif
+    dss
+    dscale('rev','MHz',0,sfrq-tunesw/2*1e-6,tunesw*1e-6)
+//    dfs
+
+"draw markers"
+
+  $mfreq=sfrq $mnuc=tn
+  
+  pen('graphics','integral')
+
+  if (marker1 <> '') and (marker1 <> 'none') then
+    $markerset1=wcmax-sc-wc/2-($mfreq-markerfrq1)/tunesw*1e6*wc
+    move($markerset1,-20)
+    draw($markerset1,wc2max)
+    write('graphics',$markerset1 +2,wc2max-10,'%s',marker1)
+  endif
+  if (marker2 <> '') and (marker2 <> 'none') then
+    $markerset2=wcmax-sc-wc/2-($mfreq-markerfrq2)/tunesw*1e6*wc
+    move($markerset2,-20)
+    draw($markerset2,wc2max)
+    write('graphics',$markerset2+2,wc2max-10,'%s',marker2)
+  endif
+  if (marker1 = '') or (marker1 = 'none') then
+    if (tn = 'none') then $tnmark='' else $tnmark=$mnuc endif
+    move(wcmax-sc-wc/2,-20)
+    draw(wcmax-sc-wc/2,wc2max)
+    write('graphics',wcmax-sc-wc/2+2,wc2max-10,'%s',$tnmark)
+  endif
+
+
+elseif ($action = 'getfreq') then
+    return(sfrq)
+elseif ($action = 'getnuc') then
+    return(tn)
+elseif ($action = 'setnuc') then
+  tn=$2 setvalue('tn',tn,'processed')
+  if (acqmode='mtune') then
+    halt(' ')
+  endif
+elseif ($action = 'setfreq') then
+  sfrq=$2 setvalue('sfrq',sfrq,'processed')
+  if (acqmode='mtune') then
+    halt(' ')
+  endif
+elseif ($action = 'setspan') then
+  tunesw=$2
+  if (acqmode='mtune') then
+    halt(' ')
+  endif
+elseif ($action = 'setpwr') then
+  tupwr=$2
+  if (acqmode='mtune') then
+    halt(' ')
+  endif
+elseif ($action = 'disp') then
+     $freq = sfrq
+//  menu('ds_1','mtune')
+  clear(0)
+  mfShowAxis=1
+  dss
+//  dfs
+  if tunesw < 0.1 then tunesw = 0.1 endif
+  dscale('rev','MHz',0,$freq-tunesw/2*1e-6,tunesw*1e-6)
+//  dss
+
+"set marker1 frequency"
+
+elseif ($action = 'setmarker1') then
+  marker1=$2
+  if (marker1 <> '') and (marker1 <> 'none')  then
+      $nuc=tn
+      write('line3','tn before=%s',$nuc)
+      $freq=sfrq
+      tn=marker1
+      markerfrq1=sfrq
+      tn=$nuc 
+      write('line3','tn after=%s',$nuc)
+      sfrq=$freq
+  elseif (marker1 <> '') or (marker1 = 'none') then
+    marker1=''
+  endif
+  if (acqmode='mtune') then
+    aa('Marker1 changed')
+    mtune('start')
+  endif
+
+"set marker2 frequency"
+
+elseif ($action = 'setmarker2') then
+  marker2=$2
+  if (marker2 <> '') and (marker2 <> 'none')  then
+      $nuc=tn
+      $freq=sfrq
+      tn=marker2
+      markerfrq2=sfrq
+      tn=$nuc 
+      sfrq=$freq
+  elseif (marker2 = '') or (marker2 = 'none') then
+    marker2=''
+  endif
+  if (acqmode='mtune') then
+    aa('Marker2 changed')
+    mtune('start')
+  endif
+
+elseif ($action = 'betweenmarkers') then
+  if (marker1 <> '') and (marker1 <> 'none') and (marker2 <> '') and (marker2 <> 'none') then
+    if (markerfrq1 >= markerfrq2) then
+      $setfreq=markerfrq2+(markerfrq1-markerfrq2)/2
+      tunesw=(markerfrq1-markerfrq2)*1.15e6
+    else
+      $setfreq=markerfrq1+(markerfrq2-markerfrq1)/2
+      tunesw=(markerfrq2-markerfrq1)*1.15e6
+    endif
+    if tunesw < 0.1 then tunesw = 0.1 endif
+    sfrq=$setfreq setvalue('sfrq',sfrq,'processed')
+    if (acqmode='mtune') then
+      halt(' ')
+    endif
+//    menu('ds_1','mtune')
+//    clear(0)
+//    mfShowAxis=1
+//    ds('rev')
+//    if tunesw < 0.1 then tunesw = 0.1 endif
+//    dscale('rev','MHz',0,$setfreq-tunesw/2*1e-6,tunesw*1e-6)
+  else
+    write('error','Two markers needed!')
+    {$0}('disp')
+  endif
+ 
+
+"enable graceful quitting"
+
+elseif ($action = 'quit') then
+  clear(2)
+  if (acqmode='mtune') then
+    aa('Do not forget to STOP first')
+  endif
+  acqmode=''
+  tmpreturn('tutmp')
+  cp(curexp+'/tmptext',curexp+'/text')
+  newdg dg
+  return
+endif

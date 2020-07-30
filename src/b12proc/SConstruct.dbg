@@ -1,0 +1,41 @@
+#
+
+import os
+import sys
+
+platform = sys.platform
+
+# define target file names
+targetLib   = 'libspinapi.so'
+
+# we need to specify an absolute path so this SConstruct file 
+# can be called from any other SConstruct file
+cwd = os.getcwd()
+
+incPath = os.path.join(cwd, os.pardir, 'b12', 'spinapi')
+# source files
+fileList = ['stubs.c']
+
+# build environment
+env = Environment(CCFLAGS    = '-std=gnu99 -fPIC -g -c -Wall -O -m32',
+                  LINKFLAGS  = '-std=gnu99 -m32',
+                  CPPPATH    = [cwd, incPath])
+
+
+# actual builds
+libShared = env.SharedLibrary(target = targetLib,
+                              source = fileList,
+                              LIBS = 'm')
+
+
+# define with absolute path where built files will be copied
+vnmrPath = os.path.join(cwd, os.pardir, os.pardir, os.pardir, 'console','b12', 'lib')
+
+# make sure the path(s) exist
+if not os.path.exists(vnmrPath):
+   os.makedirs(vnmrPath)
+vnmrPath = os.path.join(cwd, os.pardir, os.pardir, os.pardir, 'console','b12', 'lib','libspinapi.dbg')
+
+# actions to be performed after targets are built
+env.AddPostAction(libShared,
+                  Action(Copy(vnmrPath, os.path.join(cwd, targetLib))))

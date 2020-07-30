@@ -1,0 +1,21 @@
+#!
+
+import os
+import sys
+
+#get current working directory
+cwd = os.getcwd()
+
+# get the envirionment
+env = Environment()
+
+env.Execute('gcc -o mcl_RUDAT RUDAT.c libusb/*.c libhid/*.c')
+
+# define with absolute path where built files will be copied
+vnmrInstallPath = os.path.join(cwd, os.pardir, os.pardir, os.pardir, 'vnmr', 'bin')
+
+# make sure the path(s) exist
+if not os.path.exists(vnmrInstallPath):
+   os.makedirs(vnmrInstallPath)
+
+Execute('cp mcl_RUDAT ../../../vnmr/bin/.')

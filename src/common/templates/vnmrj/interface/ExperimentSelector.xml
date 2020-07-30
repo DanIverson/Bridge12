@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ! 
+ ! Copyright (C) 2015  University of Oregon
+ ! You may distribute under the terms of either the GNU General Public
+ ! License or the Apache License, as specified in the LICENSE file.
+ ! For more information, see the LICENSE file.
+ !
+ -->
+<!--
+! Specify each protocol entry and where it is located in the tab/menu scheme.
+! Each entry needs to specify the tab name and menu1 and menu2 where it is
+! to be located.  Specifying menu1 and/or menu2 as an empty string, causes
+! the protocol to be at the level above that.  A protocol with menu1 and menu2
+! empty, will be a button in the panel.  A protocol with menu2 empty, but menu1
+! specified will be in the first level menu.  A given protocol can be in multiple locations.
+! Foreground and background colors can be individually set using
+!     fgcolor="mycolor" and bgcolor="anothercolor"
+! Where the colors can be any of the colors found in the DisplayOptions panel 
+! (like burlywood) or can be a color like red, blue, green or it can take symbolic 
+! names such as "Menu1", "Heading3", "Label2" etc. If a symbolic name is given, 
+! the item will track the color for that name when changed in the Display Options panel.
+-->
+<ProtocolList>
+
+  <!-- Common Tab  -->
+  <protocol  name="PROTON"   label=""             tab="Common"   menu1=""      menu2="" />
+  <protocol  name="CARBON"   label=""             tab="Common"   menu1=""      menu2="" />
+  <protocol  name="PRESAT"   label="(H)PRESAT"    tab="Common"   menu1=""      menu2="" />
+  <protocol  name="wet1D"    label="(H)wet1D"     tab="Common"   menu1=""      menu2="" />
+  <protocol  name="gCOSY"    label="(HH)gCOSY"    tab="Common"   menu1=""      menu2="" />
+  <protocol  name="HSQCAD"   label="(HC)HSQCAD"   tab="Common"   menu1=""      menu2="" />
+  <protocol  name="gHMBCAD"  label="(HC)gHMBCAD"  tab="Common"   menu1=""      menu2="" />
+  <protocol  name="NOESY1D"  label="(H)NOESY1D"   tab="Common"   menu1=""      menu2="" />
+
+  <!-- System Studies Tab  -->
+  <protocol  name="H1COSY"     label=""         tab="Common"   menu1="Studies"   menu2="" />
+  <protocol  name="H1C13"      label=""         tab="Common"   menu1="Studies"   menu2=""  />
+  <protocol  name="H1COSYQC"   label=""         tab="Common"   menu1="Studies"   menu2="" />
+  <protocol  name="H1COSYQCBC" label=""         tab="Common"   menu1="Studies"   menu2="" />
+  <protocol  name="C13APT"     label=""         tab="Common"   menu1="Studies"   menu2="" />
+  <protocol  name="C13DEPT"    label=""         tab="Common"   menu1="Studies"   menu2="" />
+
+  <!-- Std 1D Tab  -->
+  <protocol name="PROTON"       label=""          tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="CARBON"       label=""          tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="FLUORINE"     label=""          tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="PHOSPHORUS"   label=""          tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="PRESAT"       label="(H)PRESAT" tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="wet1D"        label="(H)wet1D"  tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="water_WG"     label="(H)watergate"   tab="Liquids"   menu1="Std 1D" menu2="" />
+  <protocol name="T1_MEASURE"   label=""          tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="T2_MEASURE"   label=""          tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="APT"          label="(C)APT"    tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="CRAPT"        label="(C)CRAPT"  tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="DEPT"         label="(C)DEPT"   tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="PS1D"         label="PureShift 1D" tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="PSYCHE"       label=""           tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="HOMODEC"      label="(H)HomoDec" tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="CARBONecho"   label=""           tab="Liquids"   menu1="Std 1D"      menu2="" />
+  <protocol name="BilevelDec"   label=""           tab="Liquids"   menu1="Std 1D"      menu2="" />
+
+  <!-- (HH)Homo2D Tab  -->
+  <protocol  name="gCOSY"      label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="COSY"       label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="gDQCOSY"    label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2=""  />
+  <protocol  name="DQCOSY"     label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="TOCSY"      label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="zTOCSY"     label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="ROESY"      label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="ROESYAD"    label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="NOESY"      label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="zCOSY"      label=""         tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+  <protocol  name="PSYCHE_zTOCSY" label="PSYCHE-TOCSY (F1 decoupled)" tab="Liquids"   menu1="(HH)Homo2D"     menu2="" />
+
+  <!-- J1(CH)corr Tab -->
+  <protocol  name="HSQCAD"   label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="gHSQCAD"  label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="HSQC"     label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="gHSQC"    label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="HMQC"     label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="gHMQC"    label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="HETCOR"   label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="gHETCOR"  label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="ASAPHMQC" label=""           tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+  <protocol  name="gHSQCAD_PS" label="PureShift gHSQCAD" tab="Liquids"   menu1="J1(CH)corr"     menu2="" />
+
+  <!-- Jn(CH)corr Tab -->
+  <protocol  name="gHMBCAD"   label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="gHMBC"     label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="gH2BCAD"   label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="gH2BC"     label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="CIGAR"     label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="CIGARAD"   label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="HMBC"      label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="gHMBCmeAD" label=""          tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+  <protocol  name="gHMBCRELAY" label=""         tab="Liquids"   menu1="Jn(CH)corr"     menu2="" />
+
+  <!-- (H)Sel1D Tab -->
+  <protocol  name="NOESY1D"      label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+  <protocol  name="ROESY1D"      label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+  <protocol  name="TOCSY1D"      label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+  <protocol  name="zTOCSY1D"     label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+  <protocol  name="selexcit"     label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+  <protocol  name="bsPSYCHE"     label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+  <protocol  name="stepNOESY1D"  label=""       tab="Liquids"   menu1="(H)Sel1D"     menu2="" />
+
+  <!-- Sel2D Tab -->
+  <protocol  name="bsHSQCAD"    label="(HC)bsHSQCAD"        tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsgHSQCAD"   label="(HC)bsgHSQCAD"       tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsgHMBC"     label="(HC)bsgHMBC"         tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="EXSIDE"      label="(HC)EXSIDE"          tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsHSQCADTOXY"    label="(HC)bsHSQCADTOXY"        tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsgHSQCADTOXY"   label="(HC)bsgHSQCADTOXY"       tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsHSQCNOESY" label="(HC)bsHSQCNOESY"     tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsHSQCROESY" label="(HC)bsHSQCROESY"     tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bashdROESY"  label="(HH)bsROESY"         tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bashdTOCSY"  label="(HH)bsTOCSY"         tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bashdNOESY"  label="(HH)bsNOESY"         tab="Liquids"   menu1="Sel2D"     menu2="" />
+  <protocol  name="bsPSYCHE_zTOCSY"  label="(HH)bsPSYCHETOCSY"         tab="Liquids"   menu1="Sel2D"     menu2="" />
+
+  <!-- (HC)Crisis2 Tab  -->
+  <protocol name="c2hsqcse"  label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="c2hsqc"    label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="gc2h2bcme" label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="gc2h2bc"   label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="gc2hmbcme" label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="gc2hmbc"   label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="gc2hsqcse" label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+  <protocol name="gc2hsqc"   label=""           tab="Liquids"   menu1="(HC)Crisis2"  menu2="" />
+
+  <!-- (HC)HetToxys Tab -->
+  <protocol  name="HSQCADTOXY"  label=""        tab="Liquids"   menu1="(HC)HetToxys"     menu2="" />
+  <protocol  name="gHSQCADTOXY" label=""        tab="Liquids"   menu1="(HC)HetToxys"     menu2="" />
+  <protocol  name="HSQCTOXY"    label=""        tab="Liquids"   menu1="(HC)HetToxys"     menu2="" />
+  <protocol  name="gHSQCTOXY"   label=""        tab="Liquids"   menu1="(HC)HetToxys"     menu2="" />
+  <protocol  name="HMQCTOXY"    label=""        tab="Liquids"   menu1="(HC)HetToxys"     menu2="" />
+  <protocol  name="gHMQCTOXY"   label=""        tab="Liquids"   menu1="(HC)HetToxys"     menu2="" />
+
+  <!-- HF_Expts Tab  -->
+  <protocol name="FH_gHETCOR" label=""          tab="Liquids"   menu1="HF_Expts"  menu2="" />
+  <protocol name="FH_HOESY"   label=""          tab="Liquids"   menu1="HF_Expts"  menu2="" />
+  <protocol name="FObs_HDec"  label=""          tab="Liquids"   menu1="HF_Expts"  menu2="" />
+  <protocol name="HObs_FDec"  label=""          tab="Liquids"   menu1="HF_Expts"  menu2="" />
+
+  <!-- (CC)corr Tab  -->
+  <protocol name="INADEQUATE"       label=""          tab="Liquids"   menu1="(CC)corr"      menu2="" />
+  <protocol name="INADEQUATEAD"     label=""          tab="Liquids"   menu1="(CC)corr"      menu2="" />
+  <protocol name="ADEQUATEAD"       label=""          tab="Liquids"   menu1="(CC)corr"      menu2="" />
+
+  <!-- JSpectra Tab  -->
+  <protocol  name="HETERO2DJ"  label=""         tab="Liquids"   menu1="JSpectra"     menu2="" />
+  <protocol  name="HOMO2DJ"    label=""         tab="Liquids"   menu1="JSpectra"     menu2="" />
+
+  <!-- Hadamard Tab  -->
+  <protocol name="dqcosyHT"    label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="gcosyHT"     label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="hetcorHT"    label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="hmbcHT"      label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="hsqcHT"      label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="hsqctocsyHT" label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="noesyHT"     label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="roesyHT"     label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <protocol name="tocsyHT"     label=""      tab="Liquids"     menu1="Hadamard"   menu2="" />
+  <!-- DOSY Tab -->
+  <protocol name="Dbppste"         label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+  <protocol name="Dbppste_wg"      label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+  <protocol name="DgcsteSL"        label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+  <protocol name="DgcsteSL_dpfgse" label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+  <protocol name="Doneshot"        label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+  <protocol name="Dbppsteinept"    label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+  <protocol name="Ddeptse"         label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY" />
+
+  <protocol name="Dbppste_cc"      label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY with cc" />
+  <protocol name="DgsteSL_cc"      label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY with cc" />
+  <protocol name="DgcsteSL_cc"     label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY with cc" />
+  <protocol name="Dpfgdste"        label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY with cc" />
+  <protocol name="Dproject_cc"     label=""     tab="Liquids"   menu1="DOSY"  menu2="2D DOSY with cc" />
+
+  <protocol name="Dgcstecosy"      label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (av)" />
+  <protocol name="Dcosyidosy"      label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (av)" />
+  <protocol name="Dgcstehmqc"      label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (av)" />
+  <protocol name="Dhom2djidosy"    label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (av)" />
+
+  <protocol name="Dbppste_ghsqcse" label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (ph)" />
+  <protocol name="Dgcstehmqc_ps"   label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (ph)" />
+  <protocol name="Dghmqcidosy"     label=""     tab="Liquids"   menu1="DOSY"  menu2="3D DOSY (ph)" />
+
+  <!-- ES suppression Tab -->
+  <protocol name="water_ES"	   label=""	tab="Liquids"   menu1="ESsuppression" menu2="Std 1D" />
+  <protocol name="STD_ES"          label=""     tab="Liquids"   menu1="ESsuppression" menu2="Std 1D" />
+  <protocol name="wLOGSY_ES"       label=""     tab="Liquids"   menu1="ESsuppression" menu2="Std 1D" />
+  <protocol name="PSYCHE_ES"       label=""     tab="Liquids"   menu1="ESsuppression" menu2="Std 1D" />
+
+  <protocol name="NOESY1D_ES"      label=""     tab="Liquids"   menu1="ESsuppression" menu2="Sel 1D" />
+  <protocol name="ROESY1D_ES"      label=""     tab="Liquids"   menu1="ESsuppression" menu2="Sel 1D" />
+  <protocol name="TOCSY1D_ES"      label=""     tab="Liquids"   menu1="ESsuppression" menu2="Sel 1D" />
+  <protocol name="zTOCSY1D_ES"     label=""     tab="Liquids"   menu1="ESsuppression" menu2="Sel 1D" />
+
+  <protocol name="NOESY_ES"        label=""     tab="Liquids"   menu1="ESsuppression" menu2="Homo 2D" />
+  <protocol name="ROESY_ES"        label=""     tab="Liquids"   menu1="ESsuppression" menu2="Homo 2D" />
+  <protocol name="ROESYAD_ES"      label=""     tab="Liquids"   menu1="ESsuppression" menu2="Homo 2D" />
+  <protocol name="TOCSY_ES"        label=""     tab="Liquids"   menu1="ESsuppression" menu2="Homo 2D" />
+  <protocol name="zTOCSY_ES"       label=""     tab="Liquids"   menu1="ESsuppression" menu2="Homo 2D" />
+
+
+
+  <!-- calibration Tab -->
+  <protocol name="ch3iCalib"  label="H1/C13/Gradient\\n(CH3I sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="ATCalib"  label="H1/C13/Gradient\\nLock Gmap/Z0\\n(AutoTest sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="p31Calib"  label="P31 obs/dec\\nH1 Quantitation\\n(P31 S/N sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="ch3iPCalib"  label="P31 obs/dec\\n(CH3I+TMP sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="BenzCalib"  label="H1/N15/Gradient\\n(Benzamide sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="ATN15Calib"  label="H1/N15/Gradient\\nLock Gmap/Z0\\n(N15 AutoTest sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="z0gmap"  label="Lock Gmap/Z0\\n(Doped D2O sample)"  tab="Calibration"  menu1=""  menu2="" />
+  <protocol name="f19Calib"  label="F19 obs/dec\\n(F19 S/N sample)"  tab="Calibration"  menu1=""  menu2="" />
+
+
+  <!-- Service Tab  -->
+  <protocol  name="BasicExpts" label=""         tab="Service"   menu1=""     menu2="" />
+  <protocol  name="Lineshape"  label=""         tab="Service"   menu1=""     menu2="" />
+  <protocol  name="FastLineshape" label=""      tab="Service"   menu1=""     menu2="" />
+  <protocol  name="LongLineshape" label=""      tab="Service"   menu1=""     menu2="" />
+  <protocol  name="fidshim_lineshape" label=""  tab="Service"   menu1=""     menu2="" />
+  <protocol  name="fidshim_lineshape_fast" label="" tab="Service"   menu1=""     menu2="" />
+
+</ProtocolList>
