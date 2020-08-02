@@ -150,6 +150,9 @@ chown root:root /etc/init.d/rc.vnmr
 (cd /etc/rc0.d; if [ ! -h K99rc.vnmr ]; then
     ln -s ../init.d/rc.vnmr K99rc.vnmr; fi)
 touch $vnmrsystem/acqbin/acqpresent
+rm -f /lib/systemd/system/vnmr.service
+cp $vnmrsystem/acqbin/vnmr.service /lib/systemd/system/.
+chmod 644 /lib/systemd/system/vnmr.service
 
 #-----------------------------------------------------------------
 # Remove some files (Queues) NOT IPC_V_SEM_DBM

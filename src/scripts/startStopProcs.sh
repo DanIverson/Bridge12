@@ -22,7 +22,11 @@ vnmrsystem=/vnmr
 npids=$(pgrep Expproc)
 if [[ -z $npids ]]; then
    echo "Starting Acquisition communications."
-   ${vnmrsystem}/acqbin/ovjProcs &
+   if [[ -f /lib/systemd/system/vnmr.service ]]; then
+      systemctl start vnmr.service
+   else
+      ${vnmrsystem}/acqbin/ovjProcs &
+   fi
 else
    echo "Stopping Acquisition communications."
    ${vnmrsystem}/acqbin/ovjProcs

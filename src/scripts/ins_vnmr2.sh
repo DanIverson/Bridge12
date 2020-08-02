@@ -1728,11 +1728,11 @@ home yes no '${nmr_home}'/$accname' > "$dest_dir"/adm/users/userDefaults.bak
    # cptoconpar so everyone can update sysgcoil in conpar
    if [ x$lflvr != "xdebian" ]
    then
-      chmod 4775 "$dest_dir"/bin/execkillacqproc
+      chmod 775 "$dest_dir"/bin/execkillacqproc
       chmod 4755 "$dest_dir"/bin/loginvjpassword
       chmod 4755 "$dest_dir"/bin/cptoconpar
    else
-      sudo chmod 4775 "$dest_dir"/bin/execkillacqproc
+      sudo chmod 775 "$dest_dir"/bin/execkillacqproc
       sudo chmod 4755 "$dest_dir"/bin/loginvjpassword
       sudo chmod 4755 "$dest_dir"/bin/cptoconpar
    fi
