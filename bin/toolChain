@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Copyright (C) 2018  University of Oregon
+# 
+# You may distribute under the terms of either the GNU General Public
+# License or the Apache License, as specified in the LICENSE file.
+# 
+# For more information, see the LICENSE file.
+# 
+#
+# set -x
+
+#  lib32stdc++-6:i386
+sudo dpkg --add-architecture i386
+toolList=' 
+  g++
+  gcc
+  git
+  libc6-dev-i386
+  libmotif-dev
+  libusb-dev:i386
+  libx11-dev
+  gcc-multilib
+  libstdc++-7-dev:i386
+  libxt-dev
+  make
+  scons
+ '
+# sudo apt install git scons libusb-dev:i386 gcc libc6-dev-i386
+
+sudo apt install -y $toolList
+
+if [[ ! -f /usr/lib32/libstdc++.so ]]; then
+   cd /usr/lib32
+   sudo ln -s libstdc++.so.6.* libstdc++.so
+fi
