@@ -109,7 +109,7 @@ echo "Log file is $logfile"
 #-----------------------------------------------------------------
 npids=$(ps -e  | grep Expproc | awk '{ printf("%d ",$1) }')
 if [[ x"$npids" != "x" ]] ; then 
-    ${vnmrsystem}/bin/execkillacqproc
+   ${vnmrsystem}/acqbin/startStopProcs
 fi
 
 if [ ! -f /usr/include/usb.h ]
@@ -153,6 +153,7 @@ touch $vnmrsystem/acqbin/acqpresent
 rm -f /lib/systemd/system/vnmr.service
 cp $vnmrsystem/acqbin/vnmr.service /lib/systemd/system/.
 chmod 644 /lib/systemd/system/vnmr.service
+systemctl daemon-reload
 
 #-----------------------------------------------------------------
 # Remove some files (Queues) NOT IPC_V_SEM_DBM
@@ -166,7 +167,7 @@ rm -f /tmp/ProcQs
 rm -f /tmp/ActiveQ
 
 export vnmrsystem
-${vnmrsystem}/bin/makesuacqproc silent
+#  ${vnmrsystem}/bin/makesuacqproc silent
 
 #-----------------------------------------------------------------
 if [ $reboot -eq 1 ]
@@ -175,6 +176,9 @@ then
    echo "You must reboot Linux for these changes to take effect"
    echo "Enter 'sudo reboot' to reboot Linux"
 else
-   ${vnmrsystem}/bin/execkillacqproc
+   ${vnmrsystem}/acqbin/startStopProcs
 fi
+echo ""
+${vnmrsystem}/bin/acqcomm help
+echo ""
 

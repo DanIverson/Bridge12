@@ -556,6 +556,7 @@ if [ -e /tmp/.ovj_installed ]; then
                   echo "Configuring $name with the standard configuration (stdConf)"
                   echo "Configuring $name with the standard configuration (stdConf)" >> $insLog
                   sudo -i -u $name /vnmr/bin/Vnmrbg -mback -n1 stdConf >> $insLog 2> /dev/null
+                  echo ""
                else
                   su - $nmr_user -c "/vnmr/bin/create_pgsql_user $name 2>> $insLog"
                   echo "Adding $name to OpenVnmrJ configuration files"
@@ -563,6 +564,7 @@ if [ -e /tmp/.ovj_installed ]; then
                   echo "Configuring $name with the standard configuration (stdConf)"
                   echo "Configuring $name with the standard configuration (stdConf)" >> $insLog
                   su - $name -c "/vnmr/bin/Vnmrbg -mback -n1 stdConf >> $insLog" 2> /dev/null
+                  echo ""
                fi
             fi
          done
@@ -626,17 +628,15 @@ if [ -e /tmp/.ovj_installed ]; then
       echo " "
    fi
 
-   if [ -d /vnmr/acq/download ] || [ -d /vnmr/acq/vxBoot ]
+   if [ -d /vnmr/spinapi ]
    then
       echo "Shall this system be configured as a spectrometer."
-      echo "This involves setting up the network and downloading the"
-      echo "acquisition console software"
       echo "Would you like to configure it now? (y/n) "
       read ans
       if [ "x$ans" = "xy" -o "x$ans" = "xY" ] ; then
+         echo "Configuring system."
          /vnmr/bin/setacq
          echo " "
-         echo "The system is configured as a spectrometer."
       else
          echo "The system may be configured as a spectrometer."
          echo "  1. Log in as the OpenVnmrJ adminstrator account, $nmr_user."

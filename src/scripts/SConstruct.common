@@ -19,6 +19,7 @@ obsoleteList = 	['isjpsgup',
                'vnmr']
 
 acqList    = 	['bootr',
+                'acqcomm',
                 'cryoclient',
                 'cryomon',
                 'execkillacqproc',
@@ -79,7 +80,6 @@ fileList    = 	['adddevices',
                 'ovjUpdate',
                 'ovjUser',
                 'ovjWallPaper',
-                'patchinstall_ver1',
                 'patchinstall',
                 'patchmake',
                 'patchuninstall',
@@ -146,8 +146,6 @@ scriptFiles = [ 'vwScript',
              'vwScriptPPC',
              'vwAutoScript' ]
 
-InterixScriptFiles = [ 'makeuser_interix' ]
-
 vnmrBinPath = os.path.join(cwd,os.pardir,os.pardir,os.pardir,'vnmr','bin')
 if not os.path.exists(vnmrBinPath) :
     os.makedirs(vnmrBinPath)
@@ -178,7 +176,7 @@ if ('darwin' in platform):
    Execute(Copy(dest,i))
    Execute(Chmod(dest,0o755))
 
-if ( ('darwin' not in platform) and ('interix' not in platform) ):
+if ('darwin' not in platform):
    for i in acqList:
       dest = os.path.join(vnmrBinPath,i)
       Execute(Copy(dest,i+'.sh'))
