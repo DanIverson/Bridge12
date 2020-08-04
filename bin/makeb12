@@ -37,13 +37,14 @@ then
   rm -rf $dvdBuildName1 options vnmr console
 
   # Step 2. Clone the git-repo
-  if [[ ! -d OpenVnmrJ ]]; then
+  if [[ ! -d $buildDir/OpenVnmrJ ]]; then
      doGitClone="yes"
   fi
   if [ x$doGitClone = "xyes" ]
   then
     date=`date`
     echo "===>>> $date Removing old OpenVnmrJ <<<==="
+    cd $buildDir
     rm -rf OpenVnmrJ
     if [ x$gitSSH = "x" ]
     then
@@ -79,11 +80,12 @@ then
   fi
 
   # Step 3. Clone the ovjTools git-repo
-  if [[ ! -d ovjTools ]]; then
+  if [[ ! -d $buildDir/ovjTools ]]; then
      doGitToolsClone="yes"
   fi
   if [ x$doGitToolsClone = "xyes" ]
   then
+    cd $buildDir
     date=`date`
     echo "===>>> $date Removing old ovjTools <<<==="
     rm -rf ovjTools
