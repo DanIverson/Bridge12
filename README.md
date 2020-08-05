@@ -45,6 +45,15 @@ This repository is used in conjunction with the **OpenVnmrJ** and **ovjTools** r
     ./load.nmr
 ```
 
+9. Run OpenVnmrJ. You will probably need to logout and then login again. You can double-click the OpenVnmrJ Desktop icon and select "Trust and Launch". Alternatively, you can open a terminal window and enter
+```
+    vnmrj
+```
+10. After OpenVnmrJ starts, to configure the spectrometer, in the OpenVnmrJ command line, enter
+```
+    config
+````
+
 
 
 
