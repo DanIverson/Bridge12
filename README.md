@@ -1,6 +1,6 @@
 # Bridge12 - Support for Bridge12 ODNP spectrometer
 
-This repository is used in conjunction with the **OpenVnmrJ** and **ovjTools** repositories to build a package to support the Bridge12 ODNP spectrometer. This package can be built on Ubuntu 18 or newer systems. Network access will be required. The following instructions may be used.
+This repository is used in conjunction with the **OpenVnmrJ** and **ovjTools** repositories to build a package to support the Bridge12 ODNP spectrometer. This package must be built on an Ubuntu 18 system. Network access will be required. The following instructions may be used.
 
 1. If git does not exist on the computer, install it.
 ```
@@ -24,7 +24,7 @@ This repository is used in conjunction with the **OpenVnmrJ** and **ovjTools** r
     ./toolChain
 ```
 
-5. Build the package. As a first step, the OpenVnmrJ and ovjTools repositories will automatically be downloaded.
+5. Build the package. As a first step, the OpenVnmrJ and ovjTools repositories will automatically be downloaded. The build processes takes about 10 minutes.
 ```
     ./buildb12
 ```
