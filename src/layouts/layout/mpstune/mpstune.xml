@@ -24,27 +24,27 @@
       editable="No"
       >
       <mlabel 
-        label="64"
+        label="32"
         chval="64"
         />
       <mlabel 
-        label="128"
+        label="64"
         chval="128"
         />
       <mlabel 
-        label="256"
+        label="128"
         chval="256"
         />
       <mlabel 
-        label="512"
+        label="256"
         chval="512"
         />
       <mlabel 
-        label="1024"
+        label="512"
         chval="1024"
         />
       <mlabel 
-        label="2048"
+        label="1024"
         chval="2048"
         />
     </menu>

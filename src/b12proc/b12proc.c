@@ -395,7 +395,8 @@ int getMpsData(double del, char *path,  Globals *globals, Exps *exps)
    int msec;
    int count;
 
-   msec = (int) (del * (double) globals->complex_points * 1000.0);
+   // del is in sec
+   msec = (int) (del * (double) globals->complex_points * 1000.0) + 100;
    count = msec / 100;
    diagMessage("start getMPS wait %d ms\n", count * 100);
    // wait for tuning to start
@@ -408,8 +409,8 @@ int getMpsData(double del, char *path,  Globals *globals, Exps *exps)
 	 unlink(path);
          diagMessage("getMpsData Exp aborted while waiting\n");
          abortExp( & (globals->InfoFile[0]), globals->CodePath, 1, exps->elem);
-	 if (count)
-            sleepMilliSeconds(100*count);
+//	 if (count)
+//            sleepMilliSeconds(100*count);
          return(-1);
       }
    }
@@ -789,7 +790,7 @@ int main (int argc, char *argv[])
 
          sscanf(r->vals,"%s %lg %lg %lg", dataPath,
 			 &freq, &width, &power);
-	 del = 0.057; // dwell time between tune points
+	 del = 0.01; // dwell time between tune points in sec (10 msec)
          diagMessage("start MPSTUNE\n");
 	 memset ((void *) globals.imag, 0,
 			  sizeof(int) * globals.complex_points );

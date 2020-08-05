@@ -2428,7 +2428,7 @@ int mpsData(char *args)
    char outfile[256];
    int freq;
    int width;
-   int msec;
+   int usec;
    int fstart;
    double fincr;
    int power;
@@ -2444,11 +2444,11 @@ int mpsData(char *args)
    freq = (int) (atof(strtok( NULL, " " )) * 1e6);
    width = (int) (atof(strtok( NULL, " " )) + 0.5);
    power = (int) (atof(strtok( NULL, " " )) *10.0 + 0.1);
-   msec = (int) (atof(strtok( NULL, " " )) * 1000.0 + 0.5);
+   usec = (int) (atof(strtok( NULL, " " )) * 1e6 + 0.5);
    strcpy(outfile, strtok( NULL, " " ));
    DPRINT1(1, "EXPPROC RECEIVED MPS data outfile %s\n", outfile);
-   DPRINT5(1, "freq= %d width=%d power=%d delay= %d np= %d\n", 
-		   freq, width, power, msec, np);
+   DPRINT5(1, "freq= %d width=%d power=%d usec= %d np= %d\n", 
+		   freq, width, power, usec, np);
 
    sprintf(msg,"freq %d\n", freq);
    ret = sendMPS(msg);
@@ -2466,7 +2466,7 @@ int mpsData(char *args)
    sprintf(msg,"rfsweeppower %d\n", power);
    ret = sendMPS(msg);
 
-   mpsTuneData(0,outfile,msec,np);
+   mpsTuneData(0,outfile,usec,np);
    return ( 0 );
 }
 

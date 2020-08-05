@@ -593,10 +593,10 @@ then
          cp -r /vnmr/gshimdir /tmp/gshimdir
    fi
 
-   if [ -r /vnmr/probeid ]
-   then
-	 probeid_prep
-   fi
+#   if [ -r /vnmr/probeid ]
+#   then
+#	 probeid_prep
+#   fi
 
 fi
 
@@ -629,67 +629,67 @@ rm -f "$dest_dir"/pw_fault
 if [ x$cp_files = "xy" ]
 then
       old_link=$(readlink /vnmr)
-      if [ -d /vnmr/imaging/gradtables ]
-      then
-         if [ -f imaging/coilIDs ]
-         then
-            (cd /vnmr; tar cjf /tmp/gradtables.tar imaging/gradtables \
-            imaging/coilIDs imaging/grad.tmplt)
-         else
-            (cd /vnmr; tar cjf /tmp/gradtables.tar imaging/gradtables)
-         fi
-         cp_gradtables='y'
-      fi
-      if [ -d /vnmr/imaging/decclib ]
-      then
-         (cd /vnmr; tar cjf /tmp/decclib.tar imaging/decclib)
-         cp_decclib='y'
-      fi
-      if [ -d /vnmr/fastmap ]
-      then
-         (cd /vnmr; tar cjf /tmp/fastmap.tar fastmap)
-         cp_fastmap='y'
-      fi
+#      if [ -d /vnmr/imaging/gradtables ]
+#      then
+#         if [ -f imaging/coilIDs ]
+#         then
+#            (cd /vnmr; tar cjf /tmp/gradtables.tar imaging/gradtables \
+#            imaging/coilIDs imaging/grad.tmplt)
+#         else
+#            (cd /vnmr; tar cjf /tmp/gradtables.tar imaging/gradtables)
+#         fi
+#         cp_gradtables='y'
+#      fi
+#      if [ -d /vnmr/imaging/decclib ]
+#      then
+#         (cd /vnmr; tar cjf /tmp/decclib.tar imaging/decclib)
+#         cp_decclib='y'
+#      fi
+#      if [ -d /vnmr/fastmap ]
+#      then
+#         (cd /vnmr; tar cjf /tmp/fastmap.tar fastmap)
+#         cp_fastmap='y'
+#      fi
       if [ -d /vnmr/mollib ]
       then
        (cd /vnmr; tar cjf /tmp/mollib.tar mollib)
        cp_mollib='y'
       fi
 
-      if [ -d /vnmr/cryo/cryomon ]
-      then
-       (cd /vnmr; tar cjf /tmp/cryomon.tar cryo/cryomon cryo/probecal)
-       cp_cryomon='y'
-      fi
+#      if [ -d /vnmr/cryo/cryomon ]
+#      then
+#       (cd /vnmr; tar cjf /tmp/cryomon.tar cryo/cryomon cryo/probecal)
+#       cp_cryomon='y'
+#      fi
 
-      if [ -d /vnmr/amptables ]
-      then
-       (cd /vnmr; tar cjf /tmp/amptables.tar amptables)
-       cp_amptables='y'
-      fi
+#      if [ -d /vnmr/amptables ]
+#      then
+#       (cd /vnmr; tar cjf /tmp/amptables.tar amptables)
+#       cp_amptables='y'
+#      fi
 
       # even if the vast is not selected to be installed we still want 
       # to transfer the previous vast installation forward.
-      if [ -d /vnmr/asm/info ]
-      then
-         savevast
-         cp_vast='y'
-      fi
+#      if [ -d /vnmr/asm/info ]
+#      then
+#         savevast
+#         cp_vast='y'
+#      fi
 
-      if [ -d /vnmr/lc ]
-      then
-         (cd /vnmr; tar cjf /tmp/corba.tar acqqueue/*.CORBAref lc/FlowCal >/dev/null 2>/dev/null )
-         if [ "x`tar -tjf /tmp/corba.tar`" = x ] ; then
-             rm /tmp/corba.tar
-         else
-             cp_corba='y'
-         fi
-      fi
+#      if [ -d /vnmr/lc ]
+#      then
+#         (cd /vnmr; tar cjf /tmp/corba.tar acqqueue/*.CORBAref lc/FlowCal >/dev/null 2>/dev/null )
+#         if [ "x`tar -tjf /tmp/corba.tar`" = x ] ; then
+#             rm /tmp/corba.tar
+#         else
+#             cp_corba='y'
+#         fi
+#      fi
 
-      if [ -f "$src_code_dir"/.nv ]
-      then
-         mv_probeid='y'
-      fi
+#      if [ -f "$src_code_dir"/.nv ]
+#      then
+#         mv_probeid='y'
+#      fi
 
       if [ -d /vnmr/adm/users ]
       then
@@ -721,11 +721,11 @@ then
          fi
          cp_admusers='y'
       fi
-      if [ -d /vnmr/dicom/conf ]
-      then
-    (cd /vnmr/dicom; tar cjf /tmp/dicom.tar conf)
-    cp_dicom='y'
-      fi
+#      if [ -d /vnmr/dicom/conf ]
+#      then
+#    (cd /vnmr/dicom; tar cjf /tmp/dicom.tar conf)
+#    cp_dicom='y'
+#      fi
       if [ -d /vnmr/p11 ]
       then
          if [[ $configP11 = "yes" ]]
@@ -734,30 +734,30 @@ then
 #           (cd /vnmr; tar cjf /tmp/p11.tar p11)
          fi
       fi
-      if ( test -d /vnmr/gshimlib)
-      then
-         (cd /vnmr; tar cjf /tmp/gshimlib.tar gshimlib)
-         cp_gshimlib='y'
-      fi
+#      if ( test -d /vnmr/gshimlib)
+#      then
+#         (cd /vnmr; tar cjf /tmp/gshimlib.tar gshimlib)
+#         cp_gshimlib='y'
+#      fi
 #       if [ -d /vnmr/pgsql/data ] && [ -d /vnmr/pgsql/persistence ]
 #       then
 #          (cd /vnmr/pgsql; tar cjf /tmp/database.tar data persistence)
 #          cp_database='y'
 #       fi
 
-      if [ -d /vnmr/tune/methods ]
-      then
-         # Don't copy over the standard methods or Qtune stuff,
-    # but include the probe files (which can have pretty much any name).
-         cat >/tmp/tune.exclude <<EOF
-tune/methods
-tune/manifest
-tune/manual
-tune/OptimaFirmware/Optima.bin
-EOF
-         (cd /vnmr; tar cjfX /tmp/tune.tar /tmp/tune.exclude tune)
-         cp_protune='y'
-      fi
+#      if [ -d /vnmr/tune/methods ]
+#      then
+#         # Don't copy over the standard methods or Qtune stuff,
+#    # but include the probe files (which can have pretty much any name).
+#         cat >/tmp/tune.exclude <<EOF
+#tune/methods
+#tune/manifest
+#tune/manual
+#tune/OptimaFirmware/Optima.bin
+#EOF
+#         (cd /vnmr; tar cjfX /tmp/tune.tar /tmp/tune.exclude tune)
+#         cp_protune='y'
+#      fi
 
 #
 # accounting records
@@ -819,11 +819,11 @@ fi
 
 # if the VAST option was selected we 
 # still want to attempt restore any previous vast files.
-echo $opt_list | grep -s VAST > /dev/null
-if [ $? -eq 0 ]
-then
-   cp_vast='y'
-fi
+#echo $opt_list | grep -s VAST > /dev/null
+#if [ $? -eq 0 ]
+#then
+#   cp_vast='y'
+#fi
 
 # cp_vast='n'
 #echo $opt_list | grep -s VAST > /dev/null
@@ -1125,10 +1125,10 @@ then
       fi
    fi
 
-   if [ x$mv_probeid = "xy" ]
-   then
-     probeid_finish
-   fi
+#   if [ x$mv_probeid = "xy" ]
+#   then
+#     probeid_finish
+#   fi
 
    # Make gradtables and decclib dirs writable only by owner,
    # regardless of how they are on the CD.
@@ -2295,7 +2295,12 @@ then
        chown -R ${nmr_adm}:${nmr_group} $dest_dir/pgsql/persistence
        chmod 666 $dest_dir/pgsql/persistence/LocatorOff
     fi
-    su ${nmr_adm} -fc "/vnmr/bin/update_OpenVnmrJ /vnmr $old_link fromInstall"
+    if [ x$lflvr != "xdebian" ]
+    then
+      su ${nmr_adm} -fc "/vnmr/bin/update_OpenVnmrJ /vnmr $old_link fromInstall"
+    else
+      sudo -u ${nmr_adm} /vnmr/bin/update_OpenVnmrJ /vnmr $old_link fromInstall
+    fi
 fi
 if [ x$did_vnmr = "xy" ]
 then

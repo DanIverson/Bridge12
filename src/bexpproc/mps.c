@@ -365,6 +365,7 @@ static void recvTuneMPS(FILE *fd)
 
    DPRINT(1,"recvTuneMPS\n");
    strcpy(line,"");
+#ifdef XXX
       sleepMilliSeconds(4); 
       reading = 40;
       // First get the status result
@@ -403,6 +404,7 @@ static void recvTuneMPS(FILE *fd)
          sleepMilliSeconds(100); 
 	 }
       }
+#endif
 //      if ( ! strncmp(line,"ERROR",strlen("ERROR")) )
 //      {
 //         DPRINT(1,"Got an error ***************************************\n");
@@ -622,7 +624,7 @@ int mpsDataPt(int freq, int ms)
    return( mv );
 }
 
-void mpsTuneData(int init, char *outfile0, int msec,
+void mpsTuneData(int init, char *outfile0, int usec,
 		 int np0)
 {
    static int np;
@@ -656,9 +658,9 @@ void mpsTuneData(int init, char *outfile0, int msec,
          return;
       }
 #endif
-      statusInterval = msec * np;
-	 DPRINT3(1,"msec=%d np= %d statusInterval=%d\n",
-			 msec, np, statusInterval);
+      statusInterval = ((usec * np)/1000) + 100;  // msec
+	 DPRINT3(1,"msec=%d np= %d statusInterval=%d (ms)\n",
+			 usec/1000, np, statusInterval);
       statTuneFlag = 1;
       statrateInit();
 #ifdef XXX
@@ -732,6 +734,9 @@ void mpsTuneData(int init, char *outfile0, int msec,
    else if ((init == 2) && (statTuneFlag == 1) )  // abort case
    {
       DPRINT(1,"mpsTuneData halt case\n");
+      // Sending any character aborts the tune sweep
+      sendMPS("rxpowermv?\n");
+      recvMPS(msg, sizeof(msg));
       setRtimer( 0.0, 0.0 );
       if (outFD != NULL)
       {
