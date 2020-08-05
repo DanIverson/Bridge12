@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#  @mode com5:1200,n,8,1
+#  @pause
+#  @bossac.exe -i -e -w -b B12TMPS0042.bin
+#  @bossac.exe --port=COM5 --reset
+#
+#  sudo apt install bossa-cli
+
+if [[ $# -ne 1 ]]; then
+   echo "The firmware pathname is required"
+   exit
+fi
+
+(stty -F /dev/ttyACM0 1200 cs8 -cstopb -parenb && bossac -i -e -R -w -b $1)

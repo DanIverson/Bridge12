@@ -1,0 +1,552 @@
+Overview of Pulse Programming
+=============================
+
+Pulse sequences are written in C, a high-level programming 
+language that allows considerable sophistication in the way 
+pulse sequences are created and executed. A new pulse 
+sequence is written as a C function called pulsesequence. 
+The file containing this function is compiled and linked with 
+an object library that contains the definitions for all 
+pulse-sequence statements, the PSG. 
+A compiled C sequence is executed on the Linux workstation 
+at the start of acquisition, so-called run-time. At 
+run-time, the sequence reads values from a parameter table and 
+constructs a second real-time program of acodes, whose 
+purpose will be to run the SpinCore controller board.
+
+The PSG library contains C code to run the pulsesequence
+function and to run spectra corresponding to arrays of parameter 
+values. The user need not program these loops explicitly. 
+At the start of the acquisition, all of the variables and 
+statements of the compiled C program, including the C loops 
+and conditionals, are resolved and fixed into acodes, without 
+the possibility of further input or calculation. A complex 
+program with many choices, using the C if-else-endif
+statement, may resolve into a very few acodes, because the 
+acodes in the non-selected branches are never created. A 
+pulse program with multidimensional looping and/or 
+parameter arrays will produce a separate set of acodes for 
+every increment.
+
+The real-time acode program is automatically looped over 
+the number of scans for each multidimensional increment or 
+array element. Special real-time integer tables, t1 to t10,
+are used to increment phases and other values that might change 
+scan-to-scan. These tables and variables are initialized and 
+manipulated by special pulse-sequence statements, the 
+real-time math statements. 
+
+Compiling pulse sequences
+=========================
+
+Pulse sequence text files are stored in a directory named psglib
+in either the system directory ( /vnmr/psglib) or in a user directory 
+( /home/vnmr1/vnmrsys/psglib for the user vnmr1). A 
+pulse sequence file has the extension .c to indicate that it 
+contains C language source code. Pulse sequences may also 
+be saved in the psglib directory of an applications directory,
+which may have any name and path. An 
+applications directory is made accessible through the Edit 
+Applications tool of the Files pull down menu.
+A pulse sequence text file can be modified using the Linux 
+tool vi, the standard Red Hat editor gedit, or by an available 
+text editor or development package. 
+Pulse sequence source code is compiled by one of the 
+following methods:
+
+  By entering seqgen(filename<.c>) on the OpenVnmrJ command line.
+  By entering seqgen on the OpenVnmrJ command line, with seqfil='filename'
+  By entering seqgen filename<.c> from a Linux shell
+
+For example, enter seqgen('s2pul') to compile the s2pul.c 
+sequence in OpenVnmrJ. A full path is not necessary 
+from the command line. Alternatively, you can enter
+  seqgen s2pul
+from in a Linux shell. The seqgen command will first search the
+user, then the available applications directories, and then the
+system for a file with a .c extension. 
+
+During compilation, the system performs the following steps:
+1.  Extensions are added to the pulse sequence to allow a 
+    graphical display of the sequence, using the dps command. 
+2.  The source code is checked for syntax, variable consistency,
+    and the correct usage of functions.
+3.  The source code is converted into compiled object code.
+4.  If the conversion is successful, the object code is 
+    combined with the necessary system PSG object libraries 
+    ( libparam.so and libpsglib.so), to be linked at 
+    run-time. If the compilation of the pulse sequence with 
+    the dps extensions fails, the pulse sequence is recompiled 
+    without the dps extensions. 
+
+The executable code is stored in the user seqlib directory 
+(for example, /home/vnmr1/vnmrsys/seqlib). If the user does 
+not have a seqlib directory, it is automatically created. A 
+copy of the source code is also saved in vnmrsys/seqlib
+ of the user directory. If desired, you can copy the compiled
+sequence to /vnmr/seqlib or to the seqlib directory in an 
+applications directory. 
+Standard compiled sequences are supplied in /vnmr/seqlib
+ and the source code for each of these sequences is found in 
+/vnmr/psglib. To recompile one of 
+these sequences or to modify it, first copy the sequence into 
+the user psglib, make the required modifications, and then 
+recompile the sequence using seqgen. Sequences can only be 
+compiled from a user directory. If you attempt to compile a 
+system sequence, a local copy will be created. The 
+seqgenupdate command performs a seqgen as the first step, 
+and will then attempt to move the resulting seqlib entries 
+back to the application directory from which they were 
+taken.
+
+The source files that are used to create the PSG object 
+library are contained in the system directory /vnmr/psg.
+In principle, a user can customize and recompile the PSG 
+source files, but most users do not do so. It is easier to add 
+the user source code in a separate file using the standard C 
+#include statement. User #include files should be stored in 
+the ~/vnmrsys/psg directory of a user or an applications 
+directory. 
+
+
+Pulse Elements
+==============
+
+Pulse sequences are constructed from pulse elements, which specify
+controls for the NMR hardware. The "C-style" signature for these
+elements is defined below.
+
+void delay(double time)
+   Delay for "time" seconds. If 0.0 is passed, the delay is ignored.
+   The minimum delay time is about 67 ns.
+   Examples:
+      delay(0.1);
+      delay(d1);
+      delay(d2/2.0);
+
+
+void pulse(double time, int phase)
+   Turn on the RF for duration of "time" seconds with the RF phase set to the
+   value of the "phase" argument. A delay of "rof1" is done prior to turning
+   on the RF pulse to allow the amplifier to switch on. A delay of "rof2" is
+   done following the pulse to allow for probe ring-down.
+   Examples:
+      pulse(p1,zero);
+      pulse(pw,oph);
+      pulse(pw,PH90);
+      pulse(pw,t1);
+
+void rgpulse(double time, int phase, double rg1, double rg2)
+   Turn on the RF for duration of "time" seconds with the RF phase set to the
+   value of the "phase" argument. A delay of rg1 is done prior to turning
+   on the RF pulse to allow the amplifier to switch on. A delay of rg2 is
+   done following the pulse to allow for probe ring-down.
+   rgpulse(p1,zero,rof1,rof2) is equivalent to pulse(p1,zero).
+   Examples:
+      rgpulse(pw,oph,rof1,rof2);
+      rgpulse(p1,zero,rof1,0.0);
+      rgpulse(pw,PH90,1e-6,0.0);
+      rgpulse(pw,t1,1e-6,rof2);
+
+void offset(double frequency)  // Not yet implemented
+  Offset the RF frequency to the supplied value.
+
+void acquire(double datapnts, double dwell)
+   Start acquiring data points. The number of data points is defined
+   by the np parameter. The dwell period to acquire one complex pair is 1/sw.
+   A delay of alfa is done prior to the acquire to account for filter
+   delays. If a pulse sequence does not include an acquire pulse element,
+   one will be automatically added at the end of the sequence.
+   Examples:
+      acquire(np, 1.0/sw);
+
+void power(double amp)  // Not yet implemented
+  Control the power of the amplifier during an RF pulse. The supplied
+  amp can be in the range of 0.0 (no power) to 100.0 (full power).
+
+void microwavedelay(double duration)
+  This element will hold the TTL line high for the device specified as the
+  microwave source for "duration" seconds. The systemglobal parameter bnc
+  can be set to BNC0 or BNC1 with the config program to select the microwave
+  source.
+  Examples:
+    microwavedelay(1e-6)
+    microwavedelay(d2)
+
+void settable(int table, int cnt, int phases[])
+  The "table" argument is one of the phase table names t1-t10.
+  The "cnt" argument is the number of phase elements to be assigned
+  to the phase table. It is the number of elements in the array specified
+  by the third argument.  The phases[] arguemnt is a pre-defined array
+  of phase elements. For an example, see the "Phase cycling" section.
+
+void status(int state)
+  Controls the on/off state of the microwave source. The microwave source
+  is selected by the systemglobal bnc, which can be set with the config program
+  to BNC0 or BNC1. The parameter xm controls the on/off state. It can have multiple
+  states: status(A) sets the status described by the first letter of the xm
+  parameter, status(B) uses the second letter, etc. If a pulse sequence has more
+  status statements than there are letters in the xm parameter, control reverts
+  back to the last letter of the parameter value. For example, xm='nyn' will turn
+  the microwave source off during status A, on during status B, and off during
+  status C. Any status higher than C (D-Z) will select the final character of the
+  xm string (n) and turn the microwave source off.
+
+  The states do to need to increase monotonically during a pulse sequence. One can
+  write a pulse sequence that starts with status(A), goes later to status(B), returns
+  to status(A) and then goes to status(C).
+  Example:
+     status(A);
+     delay(d1);
+     status(B);
+
+   will turn the microwave source on during the d1 delay if xm='yn'
+   It will turn the microwave source off during the d1 delay if xm='nn'
+  
+
+Phase Cycling
+=============
+
+
+There are several phase variables that control the phase of RF pulses
+and the phase of the receiver. These are
+  zero, one, two, three
+  t1, t2, t3, t4, t5, t6, t7, t8, t9, and t10
+  oph
+
+The constants PH0, PH90, PH160, PH270 are used to select the 0, 90, 180,
+and 270 degree phase. The constants ZERO, ONE, TWO, and THREE similarly
+represent the 0, 90, 180, and 270 degree phase. These are present for
+compatibility with Varian/Agilent pulse sequences.
+
+There are also phase tables t1-t10 and oph. These tables may contain any
+number of phase elements. The particular element used is determined by
+the current transient (CT) being acquired. The tranisients increment from
+0 to (nt-1) where nt is the total number of transients.
+
+The zero, one, two, and three phase variables are initialized to ZERO,
+ONE, TWO, and THREE, respectively. The oph phase table controls the
+phase of the receiver.  It is initialized to the four values
+{ZERO,ONE,TWO,THREE}, which represents the "cyclops" phase cycle.
+The t1-t10 tables are only used if they are defined
+by the pulse sequence.
+The cp parameter (cycle phase) is typically set to 'y'. If it is set to 'n',
+the cycling of the receiver phase (oph) is turned off. That is, only the
+first element of the oph table is used. This is usually only used
+during FID shimming and wobble.
+
+The second argument to the pulse element is the phase. For example,
+  pulse(pw, zero);
+That second argument can to zero, one, two, or three. Equivalently,
+it can be PH0, PH90, PH180, or PH270.
+It can also be oph, in which case the phase of the pulse tracks the receiver
+phase. Phase tables t1-t10 can also be used. As an example
+
+static int ph1 = {PH0, PH180, PH90, PH270};
+
+void pulsesequence()
+{
+   ...
+
+   settable(t1,4,ph1);
+
+   pulse(pw,t1);
+
+}
+
+By setting oph to a table, one can alter the receiver phase.
+   settable(oph,4,ph1);
+
+
+Pulse Sequence Parameters
+=========================
+
+The following parameters are used by all pulse sequences.
+
+The global parameters do not exist and the defaults are the
+normal values. 
+
+B12_BoardNum - global parameter specifying the SpinCore board number.
+               default is 0
+
+B12_BlankBit - global parameter specifying the SpinCore blanking bit
+               default is 2
+
+B12_BypassFIR - global parameter specifying whether to bypass the
+                SpinCore FIR filter.
+                default is 1
+
+B12_ADC - global parameter specifying the SpinCore ADC frequency
+          in MHz. default is 75.0
+
+bnc - The BNC connection to use for the Microwave source.
+      default is 0
+
+Experiment parameters used by all pulse sequences include:
+
+exppath - the path name of the experiment where data will be stored.
+          This is normally set when one does a "jexp" or join experiment.
+
+arraydim - The total number of FIDs to be acquired for this experiment.
+           This parameter is automatically set when one arrays
+           a parameter.
+
+sfrq  - base frequency of the RF channel. This is normally a calculated
+        value based on the selected nucleus (tn), the lockfreq, and any
+        additional offset (tof).
+
+np - the number of points in an acquired FID (total points, sum of reals
+     and imaginaries). Number of complex pairs is np/2.
+
+nt - number of transients
+
+sw - spectral width, in Hz.
+
+tpwrf - amplitude of an RF pulse. Values range from 100.0 (full power)
+        to 0.0 (no power). If tpwrf does not exist, or if it is set
+        to "Not used" (tpwrf='n'),  full power hard pulses are used.
+        If tpwrf is set to a number between 0 and 100, the "shaped
+        pulse" feature of the SpinCore board is used. The shape is a
+        rectangular shape and tpwrf controls the amplitude of this
+        shape. This allows for less than full power pulses.
+
+rattn - controls the additional "Receiver attenuator" hardware. If
+        rattn does not exist or is set to "Not used" (rattn='n'),
+        then no instructions are sent to the additional attenuator.
+        If rattn is a value between 0 and 120, then that value is
+        sent to the attenuator. Setting rattn=0 means no attenuation
+        of the incoming signal. Setting rattn=120 means adding 120 dBm
+        of attenuation to the incoming signal.
+
+rof1 - time prior to an RF pulse to allow for the amplifier turnon time.
+
+rof2 - time following an RF pulse. Often reflects probe ringdown
+       time.
+
+alfa - delay prior to acquiring data. Often used to account for filter
+       group delay.
+
+cp - cycle phase, controls the behavior of the oph phase table. For
+     cp='y', the oph phase table uses all elements of the table.
+     If cp='n', only the first element of the table is used.
+
+array - used to determine what parameters, if any, are arrayed.
+
+ni - number of increments in the first indirect dimension. This
+     identifies a 2D experiment.
+
+ix - current increment. It's values will range from 1 to arraydim.
+     It can be used to select alternate sequences for an arrayed
+     experiment. For example, to acquire data where every other
+     FID has the microwave source turned on, one could do something
+     like the following.
+
+     if (ix % 2)
+        microwavedelay(bnc,d2);
+     else
+        delay(d2);
+
+Other parameter associated with a pulse sequence are used within the
+pulse sequence itself. For example, the s2pul.c pulse sequence uses
+
+d1 - relaxation delay prior to the first pulse
+p1 - pulse width of the first pulse
+d2 - delay between the first and second pulse
+pw - pulse width of the second pulse
+
+Processing parameters
+
+wexp - specify action to take at the completion of the data acquisition.
+werr - specify action to take if an error occurs during data acquisition.
+
+
+ACODE generation
+================
+
+When the OpenVnmrJ "go" command is executed, the parameter seqfil is used to
+select the pulse sequence to execute. For example, if seqfil='s2pul', then
+a binary file named s2pul is looked for in ~/vnmrsys/seqlib and /vnnmr/seqlib.
+If it is found, it is started and the parameters from the "joined" experiment,
+along with the global parameters are sent to the s2pul binary. The s2pul program
+then generates a set of acodes, based on the parameters and the details of the
+pulsesequence function. The acodes are keyword - value pairs. For example, running
+s2pul with just a single transient (nt=1) may generate a set of acodes such as
+
+DEBUG 0
+BOARD_NUMBER 0
+BLANK_BIT 2
+BYPASS_FIR 1
+ADC_FREQUENCY 75
+FILE /home/vnmr1/vnmrsys/exp2/acqfil
+ARRAYDIM 1
+PULSEPROG_START 1
+SPECTROMETER_FREQUENCY 14.0005
+NUMBER_POINTS 32768
+NUMBER_OF_SCANS 1
+SPECTRAL_WIDTH 8012.82
+POWER 100
+PULSE_ELEMENTS START
+PHASE_RESET 1
+DELAY 1
+PULSE 4.9e-06 0 1e-05
+DELAY 3.4875e-05
+ACQUIRE 0
+PULSEPROG_DONE 1
+
+The values following each keyword are determined from the parameters that
+were sent to the pulse sequence program (s2pul). The acodes are reproduced below
+with the operative parameters noted.
+
+DEBUG 0                               "debug flag set by whether go or go('debug') is called"
+BOARD_NUMBER 0                        "global B12_BoardNum parameter"
+BLANK_BIT 2                           "global B12_BlankBit parameter"
+BYPASS_FIR 1                          "global B12_BypassFIR parameter"
+ADC_FREQUENCY 75                      "global B12_ADC parameter"
+FILE /home/vnmr1/vnmrsys/exp2/acqfil  "exppath parameter"
+ARRAYDIM 1                            "arraydim parameter"
+PULSEPROG_START 1                     "keyword indicating start of experiment."
+                                      "Index indicates which array element is being collected"
+                                      "It would range from 1 to ARRAYDIM."
+SPECTROMETER_FREQUENCY 14.0005        "sfrq parameter"
+NUMBER_POINTS 32768                   "np parameter"
+NUMBER_OF_SCANS 1                     "nt parameter"
+SPECTRAL_WIDTH 8012.82                "sw parameter"
+POWER 100                             "tpwrf parameter"
+PULSE_ELEMENTS START                  "Keyword indicating start of pulsesequence"
+PHASE_RESET 1                         "Keyword to reset phases. Called once for
+                                      "each element in array."
+DELAY 1                               "d1 parameter"
+PULSE 4.9e-06 0 1e-05                 "pw parameter, first element of oph phase table, rof1 parameter"
+DELAY 3.4875e-05                      "sum of parameters rof2 and alfa"
+ACQUIRE 0                             "Keyword to trigger data acquisition. 0 argument is the
+                                      " 'current transient' (ct). It ranges from 0 to NUMBER_OF_SCANS-1"
+                                      "It is there to simplify acode parsing"
+PULSEPROG_DONE 1                      "Keyword to indicate acodes for FID 1 is done."
+                                      "It also is an instruction to get the data from the
+                                      "SpinCore system and save it to FILE"
+
+Phase cycling is handled by incrementing the index used when accessing the phase tables. Note that the
+actual phase tables are not included in the acodes. Only the values of the indexed phase tables are in the
+acodes. To avoid multiple copies of the acodes where the only differences are the phase values, the PSG
+first scans the pulse sequence to determine the longest phase cycle used, and then uses the SpinCore
+looping mechanism to loop over the pulse elements the proper number of times. To illustrate, the following
+are the acodes for s2pul with nt=10. The longest phase cycle used by s2pul is 4 for the receiver (oph)
+phase cycle. The acodes loop twice over four transients and then the remaining two transients follow.
+Acodes with no comments are the same as for the seqfil='s2pul' and  nt=1 case.
+
+
+DEBUG 0
+BOARD_NUMBER 0
+BLANK_BIT 2
+BYPASS_FIR 1
+ADC_FREQUENCY 75
+FILE /home/vnmr1/vnmrsys/exp2/acqfil
+ARRAYDIM 1
+PULSEPROG_START 1
+SPECTROMETER_FREQUENCY 14.0005
+NUMBER_POINTS 32768
+NUMBER_OF_SCANS 10                    "nt parameter"
+SPECTRAL_WIDTH 8012.82
+POWER 100
+PULSE_ELEMENTS START
+PHASE_RESET 1
+NSC_LOOP 2                            "keyword to loop over the following acodes 2 times"
+                                      "the end of the looping section is denoted
+                                      "by the NSC_ENDLOOP keyword"
+DELAY 1
+PULSE 4.9e-06 0 1e-05                 "pulse with phase 0"
+DELAY 3.4875e-05
+ACQUIRE 0                             "end of transient 0"
+DELAY 1
+PULSE 4.9e-06 1 1e-05                 "pulse with phase 1"
+DELAY 3.4875e-05
+ACQUIRE 1                             "end of transient 1"
+DELAY 1
+PULSE 4.9e-06 2 1e-05                 "pulse with phase 2"
+DELAY 3.4875e-05
+ACQUIRE 2                             "end of transient 2"
+DELAY 1
+PULSE 4.9e-06 3 1e-05                 "pulse with phase 3"
+DELAY 3.4875e-05
+NSC_ENDLOOP 10                        "Because of the way SpinCore programming works,
+                                      "the NSC_ENDLOOP is specified prior to the final
+                                      "acode in the loop." 
+ACQUIRE 3                             "end of transient 3"
+DELAY 1                               "Program the remaining two transients"
+PULSE 4.9e-06 0 1e-05                 "pulse with phase 0"
+DELAY 3.4875e-05
+ACQUIRE 0
+DELAY 1
+PULSE 4.9e-06 1 1e-05                 "pulse with phase 1"
+DELAY 3.4875e-05
+ACQUIRE 1
+PULSEPROG_DONE 1
+
+Acquiring arrayed data sets involves multiple acode sets. This is illustrated in the following
+acode set for seqfil='s2pul' and nt=1,4
+
+DEBUG 0
+BOARD_NUMBER 0
+BLANK_BIT 2
+BYPASS_FIR 1
+ADC_FREQUENCY 75
+FILE /home/vnmr1/vnmrsys/exp2/acqfil
+ARRAYDIM 2                            "acquire 2 FIDs"
+PULSEPROG_START 1                     "Start acodes for FID 1" 
+SPECTROMETER_FREQUENCY 14.0005
+NUMBER_POINTS 32768
+NUMBER_OF_SCANS 1
+SPECTRAL_WIDTH 8012.82
+POWER 100
+PULSE_ELEMENTS START
+PHASE_RESET 1
+DELAY 1
+PULSE 4.9e-06 0 1e-05
+DELAY 3.4875e-05
+ACQUIRE 0
+PULSEPROG_DONE 1                      "Finish acodes for FID 1"
+PULSEPROG_START 2                     "Start acodes for FID 2" 
+SPECTROMETER_FREQUENCY 14.0005
+NUMBER_POINTS 32768
+NUMBER_OF_SCANS 4
+SPECTRAL_WIDTH 8012.82
+POWER 100
+PULSE_ELEMENTS START
+PHASE_RESET 1                        "No need for NSC looping elements"
+                                     "since nt=4 is the same as the maximum"
+                                     "phase cycle"
+DELAY 1
+PULSE 4.9e-06 0 1e-05
+DELAY 3.4875e-05
+ACQUIRE 0
+DELAY 1
+PULSE 4.9e-06 1 1e-05
+DELAY 3.4875e-05
+ACQUIRE 1
+DELAY 1
+PULSE 4.9e-06 2 1e-05
+DELAY 3.4875e-05
+ACQUIRE 2
+DELAY 1
+PULSE 4.9e-06 3 1e-05
+DELAY 3.4875e-05
+ACQUIRE 3
+PULSEPROG_DONE 2                      "Finish acodes for FID 2"
+
+
+ACODE interpretation
+====================
+
+When the go command is executed, it generates the acode file as described above and a second
+file used by "the procs" to handle experiment queueing and monitoring. When the controlling
+Expproc determines that it is time to start an experiment, it checks its queue and starts
+B12proc, passing the name of the acode file to use. The B12proc progrm reads the acode file line by line.
+Each keyword causes some action. Some keywords, such as BOARD_NUMBER, BLANK_BIT, BYPASS_FIR,
+ADC_FREQUENCY, FILE, NUMBER_POINTS, NUMBER_OF_SCANS, SPECTRAL_WIDTH, and POWER just set parameters.
+Other keywords cause SpinCore elements to be executed. The PULSEPROG_START acode causes the SpinCore
+initialization functions to be called. It also initializes the internal current transient (ct)
+counter. The PULSE_ELEMENTS acode calls the pb_start_programming(PULSE_PROGRAM) SpinCore function.
+The PULSEPROG_DONE acode calls the pb_stop_programming() function and also uses the pb_get_data()
+function to collect the data from the SpinCore board and save it to a file defined by the FILE
+keyword. Other keywords, such as DELAY, PULSE, and ACQUIRE cause appropriate pb_inst_radio_shape()
+functions to be called .

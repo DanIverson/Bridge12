@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#  @mode com5:1200,n,8,1
+#  @pause
+#  @bossac.exe -i
+#  @bossac.exe --port=COM5 --reset
+#
+#  sudo apt install bossa-cli
+
+(stty -F /dev/ttyACM0 1200 cs8 -cstopb -parenb && bossac -i)
