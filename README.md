@@ -35,7 +35,7 @@ This repository is used in conjunction with the **OpenVnmrJ** and **ovjTools** r
 
 7. Optional step to package OpenVnmrJ for distribution. The actual name of the zip file is selectable.
 ```
-    cd ../..
+    cd ~/ovjbuild
     zip -ry OpenVnmrJ_B12.zip dvdimageB12
 ```
 
