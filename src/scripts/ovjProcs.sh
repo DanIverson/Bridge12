@@ -28,7 +28,7 @@ killaproc()
         fi
         if [ x$2 = "xExpproc" ]
 	then
-	    sleep 7
+	    sleep 2
 	fi
 
   # test to be sure the process died, if still running try kill -9
