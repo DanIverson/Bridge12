@@ -550,7 +550,7 @@ if [ -e /tmp/.ovj_installed ]; then
                /vnmr/bin/makeuser $name /home $nmr_group y >> $insLog
                echo "Adding $name as Locator account"
                if [ x$distroType = "xdebian" ]; then
-                  sudo -i -u $nmr_user /vnmr/bin/create_pgsql_user $name &>> $insLog
+                  sudo -i -u $nmr_user /vnmr/bin/create_pgsql_user $name >> $insLog 2> /dev/null
                   echo "Adding $name to OpenVnmrJ configuration files"
                   sudo -i -u $nmr_user /vnmr/bin/ovjUser $name
                   echo "Configuring $name with the standard configuration (stdConf)"

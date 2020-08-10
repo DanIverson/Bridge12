@@ -64,9 +64,9 @@ vwacqPath    = os.path.join(cwd, os.pardir, 'vwacq')
 vwacqHdrList = ['hostAcqStructs.h']
 
 # build environment
-env = Environment(CCFLAGS    = '-fPIC -c -Wall -O -m32',
+env = Environment(CCFLAGS    = '-fPIC -c -Wall -O -m64',
                   CPPDEFINES = ['LINUX', 'NESSIE', 'USE_HTONS'],
-                  LINKFLAGS  = '-m32',
+                  LINKFLAGS  = '-m64',
                   CPPPATH    = [cwd])
 if ('darwin' in platform):
     env.Replace(CC = 'clang')

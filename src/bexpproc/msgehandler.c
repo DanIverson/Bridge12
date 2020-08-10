@@ -1429,7 +1429,7 @@ int autoMode(char *args)
 {
    char *returnInterface;
    char *token;
-   char autodir[256], autoDoneQ[256];
+   char autodir[256], autoDoneQ[256*2];
 
    /* AutoMode = AUTO_PENDING; */
    returnInterface = strtok( NULL, "\n" );

@@ -49,9 +49,9 @@ def symlink(src, dest):
 
 
 # build environments
-seqLibEnv = Environment(CCFLAGS    = '-O -m32',
+seqLibEnv = Environment(CCFLAGS    = '-O -m64',
                         CPPDEFINES = ['LINUX', 'NESSIE'],
-                        LINKFLAGS  = '-O -m32 -Wl,-rpath,/vnmr/lib',
+                        LINKFLAGS  = '-O -m64 -Wl,-rpath,/vnmr/lib',
                         CPPPATH    = [psgPath])
                                       
 # custom builder for dps_ps_gen

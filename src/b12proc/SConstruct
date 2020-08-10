@@ -60,9 +60,9 @@ fileList = ['b12proc.c',
 incPath = os.path.join(cwd, os.pardir, 'spinapi', 'spinapi')
 spinapiPath = os.path.join(cwd, os.pardir, 'spinapi', 'spinapi','lib')
 # build environment
-env = Environment(CCFLAGS    = '-std=gnu99 -m32 -O2 -Wall',
+env = Environment(CCFLAGS    = '-std=gnu99 -m64 -O2 -Wall',
                   CPPDEFINES = ['LINUX','NIRVANA'],
-                  LINKFLAGS  = '-std=gnu99 -m32 -Wl,-rpath,/vnmr/lib',
+                  LINKFLAGS  = '-std=gnu99 -m64 -Wl,-rpath,/vnmr/lib',
                   CPPPATH    = [cwd, incPath])
 
 # actual build

@@ -254,7 +254,7 @@ void initparms()
 
     if (ap_interface == 4)
     {
-       char nucleiNameStr[MAXSTR], nucleus[MAXSTR], strbuf[MAXSTR];  
+       char nucleiNameStr[MAXSTR], nucleus[MAXSTR], strbuf[MAXSTR*2];  
        nucleiNameStr[0]='\0'; strbuf[0]='\0'; nucleus[0]='\0';
        strcpy(nucleiNameStr,"'");
 

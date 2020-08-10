@@ -28,7 +28,7 @@ if test ! -f $logdir
         echo $logdir
 #        grep -s  warning ${logdir}
 #        Skip Classpath errors from DashO
-        grep -s ERROR ${logdir} | grep -v "Check Classpath" | grep -v "Check CLASSPATH"
+        grep -sw ERROR ${logdir} | grep -v "Check Classpath" | grep -v "Check CLASSPATH"
         grep -s Fatal ${logdir}
         grep -w "fatal " ${logdir}
         grep -w "ld: fatal:" ${logdir}
@@ -47,7 +47,7 @@ if test ! -f $logdir
         grep -s "building terminated" ${logdir}
         echo ""
         echo "In $logdir there are : "
-        echo "   Total of  `grep -s ERROR ${logdir} | grep -v "Check Classpath" | grep -v "Check CLASSPATH" | wc -l`  ERRORS ."
+        echo "   Total of  `grep -sw ERROR ${logdir} | grep -v "Check Classpath" | grep -v "Check CLASSPATH" | wc -l`  ERRORS ."
         echo "             `grep -c Fatal ${logdir}`  Fatal errors ."
         echo "             `grep -c \"fatal \" ${logdir}`  fatal errors ."
         echo "             `grep -c \"ld: fatal:\" ${logdir}`  ld: fatal: ."

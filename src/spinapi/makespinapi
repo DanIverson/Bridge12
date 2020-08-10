@@ -33,7 +33,7 @@ rm -f spinapi/examples/RadioProcessor/DirectCapture
 rm -f spinapi/examples/RadioProcessor/excite_test
 rm -f spinapi/examples/RadioProcessor/singlepulse_nmr
 cp -r Makefile.linux.general spinapi/examples/General/Makefile.linux
-cp -r Makefile.linux32 spinapi/src/.
+cp -r Makefile.linux spinapi/src/.
 
 cd spinapi/src
 
@@ -42,8 +42,7 @@ if [ ! -d $destdir ]; then
    mkdir -p $destdir
 fi
 make -f Makefile.linux clean >& /dev/null
-make -f Makefile.linux32
-cp ../lib/libspinapi.so $destdir/libspinapi.32bit
+make -f Makefile.linux 2> /dev/null
 cp ../lib/libspinapi.so $destdir/libspinapi.so
 rm -rf .temp
 cd ../examples/General

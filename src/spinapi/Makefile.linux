@@ -1,0 +1,93 @@
+# This Makefile builds spinapi as a static or dynamic library on Linux.
+
+# Name of the library
+SPINAPI = spinapi
+ARCH    = x64
+
+FTD2XXDIR = ./FTD2XX/Linux
+SRC_FILES = spinapi.c debug.c util.c caps.c if.c usb.c driver-usb-linux.c driver-direct-linux.c
+CC        = gcc  
+CFLAGS    = -std=gnu99 -fPIC -c -Wall
+DEFINES   = -D__LINUX__
+INC       = -I/user/include -I$(FTD2XXDIR)
+LIB       = -lusb -lm -lftd2xx
+SRC       = $(SRC_FILES)
+COMPILE   = $(CC) $(SRC) $(CFLAGS) $(DEFINES) $(INC) $(LIB)
+
+
+
+default: dynamic
+
+
+
+compile:
+	#Copy necessary header files into the include folder
+	-cp    -f   spinapi.h dds.h pulseblaster.h radioprocessor.h spinpts.h ../inc
+	
+	#Make temporary folder for building purposes
+	-rm    -rf  .temp
+	mkdir  -p   .temp
+
+ifeq ($(ARCH), $(filter $(ARCH), x86 x32 i386))
+	#Compile SpinAPI into 32-bit object files
+	$(COMPILE) -m32 $<
+	
+	#Extract objects from 32-bit FTD2XX library into temp folder
+	cd         .temp &&\
+	ar    -x   ../$(FTD2XXDIR)/x86/libftd2xx.a
+else
+	#Compile SpinAPI into 64-bit object files
+	$(COMPILE) -m64 $<
+				
+	#Extract objects from 64-bit FTD2XX library into temp folder
+	cd         .temp &&\
+	ar    -x   ../$(FTD2XXDIR)/x86_64/libftd2xx.a
+endif
+
+	#Store built objects into temp folder
+	mv    *.o  .temp
+
+
+
+static: compile
+	#Combine all objects in temp to form a single archive, this will be the static SpinAPI library
+	ar    -rc  libspinapi.a .temp/*.o
+	mv    -f   libspinapi.a ../lib 
+
+
+
+dynamic: compile
+	#Combine all objects in temp into a shared object,
+	# this will be the dynamic SpinAPI library 	
+
+ifeq ($(ARCH), $(filter $(ARCH), x86 x32 i386))
+	#Build 32-bit library if specified
+	gcc    -shared -m32 -o   libspinapi.so .temp/*.o -ldl -pthread -lusb
+else
+	#Build 64-bit library by default
+	gcc    -shared -m64 -o   libspinapi.so .temp/*.o -ldl -pthread -lusb
+endif
+	mv     -f                libspinapi.so ../lib 
+
+
+
+install:
+	-mkdir -p   /usr/include/spinapi
+	-cp    -f   ../inc/*.h             /usr/include/spinapi
+	-cp    -f   ../lib/libspinapi.so   /usr/lib
+	-cp    -f   ../lib/libspinapi.a    /usr/lib
+
+
+
+uninstall:
+	-rm        /usr/include/spinapi.h
+	-rm        /usr/lib/libspinapi.so
+	-rm        /usr/lib/libspinapi.a
+
+
+
+clean:
+	-rm        *.o
+	-rm        libspinapi.so
+	-rm        libspinapi.a
+	-rm   -rf  ./.temp

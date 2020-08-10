@@ -439,7 +439,7 @@ void write_shr_info(double exp_time)
     strcpy(ExpInfo.WaveFormFile,"");
     if (ExpInfo.InteractiveFlag)
     {
-       char tmppath[256];
+       char tmppath[256*2];
        sprintf(tmppath,"%s.new",infopath);
        unlink(tmppath);
        Infofd = open(tmppath,O_EXCL | O_WRONLY | O_CREAT,0666);

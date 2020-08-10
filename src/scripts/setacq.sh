@@ -112,12 +112,6 @@ if [[ x"$npids" != "x" ]] ; then
    ${vnmrsystem}/acqbin/startStopProcs
 fi
 
-if [ ! -f /usr/include/usb.h ]
-then
-   echo "Installing USB package"
-   echo "Installing USB package" &>> $logfile
-   apt-get -y install libusb-dev libusb-dev:i386 &>> $logfile
-fi
 if [ ! -f /etc/udev/rules.d/99-spincore.rules ]
 then
    echo "Installing SpinCore USB rules"
@@ -126,12 +120,6 @@ then
    udevadm control --reload-rules
 fi
 
-# This is required for Infoproc to be able to register its socket
-if [[ ! -x /sbin/rpcbind ]] ; then
-   echo "Installing rpcbind package"
-   echo "Installing rpcbind package" &>> $logfile
-   apt-get -y install rpcbind &>> $logfile
-fi
 systemctl is-active --quiet rpcbind.service
 if [[ $? -ne 0 ]]; then
    systemctl add-wants multi-user rpcbind.service &>> $logfile

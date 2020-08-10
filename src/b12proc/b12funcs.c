@@ -64,6 +64,7 @@ static struct datafilehead fidfileheader;
 static struct datablockhead fidblockheader;
 
 /* dummy struct for now */
+#ifdef XXX
 typedef struct  {
 			long np;
 			long ct;
@@ -74,6 +75,7 @@ typedef struct  {
 			long v4;
 			long v5[10];
 		  } lc;
+#endif
 
 #ifdef LINUX
 struct recvProcSwapbyte
@@ -82,11 +84,11 @@ struct recvProcSwapbyte
    short s2;
    short s3;
    short s4;
-   long  l1;
-   long  l2;
-   long  l3;
-   long  l4;
-   long  l5;
+   int  l1;
+   int  l2;
+   int  l3;
+   int  l4;
+   int  l5;
 };
 
 typedef union

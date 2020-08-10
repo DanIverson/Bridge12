@@ -552,6 +552,8 @@ createDPS(char *cmd, char *expdir, double arraydim, int array_num, char *array_s
 	char	retdata[32];
         double  tmpval;
 	struct  stat   f_stat;
+        int     ret2 __attribute__((unused));
+        FILE    *ret __attribute__((unused));
 
         dpsOn = 1;
         dpsSkip = 0;
@@ -580,8 +582,8 @@ createDPS(char *cmd, char *expdir, double arraydim, int array_num, char *array_s
 		   vFlag = cmd[4] - '0';
 		if (vFlag == 0)
 		{
-		    freopen("/dev/null","a", stdout);
-		    freopen("/dev/null","a", stderr);
+		    ret = freopen("/dev/null","a", stdout);
+		    ret = freopen("/dev/null","a", stderr);
                     outOff = 1;
 		}
 		else
@@ -687,8 +689,8 @@ createDPS(char *cmd, char *expdir, double arraydim, int array_num, char *array_s
              reset_dps_parms(expdir);
              reset_channels();
              if (!outOff) {
-                freopen("/dev/null","a", stdout);
-	        freopen("/dev/null","a", stderr);
+                ret = freopen("/dev/null","a", stdout);
+	        ret = freopen("/dev/null","a", stderr);
                 outOff = 1;
              }
 #ifdef  AIX
@@ -719,7 +721,7 @@ createDPS(char *cmd, char *expdir, double arraydim, int array_num, char *array_s
 	     strcpy(retdata, "1 \n");
 	  else
 	     strcpy(retdata, "3 \n");
-          write(pipe2nmr,retdata, strlen(retdata));
+          ret2 = write(pipe2nmr,retdata, strlen(retdata));
 	}
 	if (dpsFlag >= PLOT) {
            if (pipe2nmr >= 0)
@@ -739,8 +741,8 @@ createDPS(char *cmd, char *expdir, double arraydim, int array_num, char *array_s
            if (debugTimer > 0)
               vFlag = 1;
            if (!outOff && debugTimer < 1) {
-              freopen("/dev/null","a", stdout);
-	      freopen("/dev/null","a", stderr);
+              ret = freopen("/dev/null","a", stdout);
+	      ret = freopen("/dev/null","a", stderr);
               outOff = 1;
            }
         }
@@ -765,7 +767,7 @@ createDPS(char *cmd, char *expdir, double arraydim, int array_num, char *array_s
 	if (dpsTimer == 1)
 	{
 	   sprintf(retdata, "2 %f \n", totalTime);
-           write(pipe2nmr,retdata, strlen(retdata));
+           ret2 = write(pipe2nmr,retdata, strlen(retdata));
 	}
 	close(pipe2nmr);
 }
@@ -1213,6 +1215,7 @@ static double cal_dps_timer(int id)
 	double	    fval, inc_ni, t_time;
 	double	    nt2, ss2;
 	double	    ss_time;
+        FILE       *ret __attribute__((unused));
 
 	a_list = array_list;
 	pname = NULL;
@@ -1221,8 +1224,8 @@ static double cal_dps_timer(int id)
 	if (id == 1)
 	{
            if (!outOff) {
-	      freopen("/dev/null","a", stdout);
-	      freopen("/dev/null","a", stderr);
+	      ret = freopen("/dev/null","a", stdout);
+	      ret = freopen("/dev/null","a", stderr);
               outOff = 1;
            }
 	}
@@ -1852,7 +1855,7 @@ void end_parallel_time(RTNODE *node)
 
 static void simulate_dps_code(int ct_num)
 {
-	int	v1, delayEvent;
+	int	v1;
 	int	kzloop;
 	double	f1, exTime;
 	RTNODE  *cnode;
@@ -1879,7 +1882,6 @@ static void simulate_dps_code(int ct_num)
         kzloop = 0;
 	while (cnode != NULL)
 	{
-	   delayEvent = 0;
 #ifndef NVPSG
 #if !defined(G2000) || defined(MERCURY)
 	   exTime += 10.0e-5;

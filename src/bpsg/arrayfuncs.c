@@ -516,7 +516,6 @@ void arrayPS(int index, int numarrays)
                    nvars;
    int             ret;
    int             gindx;
-   double         *temptr;
 
    name = lpel[index]->lpvar[0];
    nvals = lpel[index]->numvals;
@@ -584,7 +583,6 @@ void arrayPS(int index, int numarrays)
 	    }
 	 }
 
-	 temptr = (double *) *parmptr;
       }
       if (numarrays > 1)
 	 arrayPS(index + 1, numarrays - 1);
@@ -671,8 +669,6 @@ int func4tof(double value)
 static
 int func4nt(double value)
 {
- int tempnt;
-   tempnt = (int) (value + 0.005);
    DPRINT1(DPRTLEVEL,"func for nt called, new value: %ld\n", (int) (value + 0.005));
    return (0);
 }

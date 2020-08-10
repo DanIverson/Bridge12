@@ -52,7 +52,7 @@
       style="PlainText"
       label="3.2"
       vq="np"
-      set="$VALUE=np*0.05/2.0"
+      set="$VALUE=0.1+np*0.01/2.0"
       />
     <textmessage loc="120 210" size="65 20"
       style="PlainText"

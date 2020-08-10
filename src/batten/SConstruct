@@ -9,7 +9,7 @@ cwd = os.getcwd()
 # get the envirionment
 env = Environment()
 
-env.Execute('gcc -o mcl_RUDAT RUDAT.c libusb/*.c libhid/*.c')
+env.Execute('gcc -o mcl_RUDAT RUDAT.c libusb/*.c libhid/*.c >& /dev/null')
 
 # define with absolute path where built files will be copied
 vnmrInstallPath = os.path.join(cwd, os.pardir, os.pardir, os.pardir, 'vnmr', 'bin')

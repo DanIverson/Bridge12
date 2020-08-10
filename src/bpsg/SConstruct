@@ -103,9 +103,9 @@ makeList  = ['makeuserpsg.lnx',
              'seqgenmake']
 
 # build environment
-env = Environment(CCFLAGS    = '-c -O -m32 -fPIC -Wall',
+env = Environment(CCFLAGS    = '-c -O -m64 -fPIC -Wall',
                   CPPDEFINES = ['LINUX', 'NESSIE', 'PSG_LC'],
-                  LINKFLAGS  = '-m32 -Wl,-rpath,.',
+                  LINKFLAGS  = '-m64 -Wl,-rpath,.',
                   CPPPATH    = [cwd])
 
 
