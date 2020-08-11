@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rights-list>
+   <rights name="May Edit Help Field" keyword="mayedithelpfield" approve="true" />
+   <protocol name="HOMO2DJ" dirLabel="Agilent system" tablabel="JSpectra" approve="true" />
+   <protocol name="HETERO2DJ" dirLabel="Agilent system" tablabel="JSpectra" approve="true" />
+   <protocol name="FLUORINE" dirLabel="Agilent system" tablabel="Std 1D" approve="true" />
+   <protocol name="DQCOSY" dirLabel="Agilent system" tablabel="(HH)Homo2D" approve="true" />
+   <protocol name="H1C13" dirLabel="Agilent system" tablabel="System Studies" approve="true" />
+   <protocol name="H1COSY" dirLabel="Agilent system" tablabel="System Studies" approve="true" />
+   <protocol name="PROTON" dirLabel="Agilent system" tablabel="Common" approve="true" />
+   <protocol name="COSY" dirLabel="Agilent system" tablabel="(HH)Homo2D" approve="true" />
+   <protocol name="macro" dirLabel="Agilent imaging" tablabel="Adv" approve="false" />
+   <protocol name="T1_MEASURE" dirLabel="Agilent system" tablabel="Std 1D" approve="true" />
+   <protocol name="CARBON" dirLabel="Agilent system" tablabel="Common" approve="true" />
+   <protocol name="BasicExpts" dirLabel="Agilent system" tablabel="Service" approve="true" />
+   <protocol name="T2_MEASURE" dirLabel="Agilent system" tablabel="Std 1D" approve="true" />
+   <protocol name="PHOSPHORUS" dirLabel="Agilent system" tablabel="Std 1D" approve="true" />
+</rights-list>
